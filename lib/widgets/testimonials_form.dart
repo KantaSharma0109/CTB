@@ -20,27 +20,18 @@ class _FeedbackFormState extends State<TestimonialsForm> {
   // final TextEditingController _numberController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
   File? _selectedImage;
-  // To handle the form submission
-  // void _submitForm() {
-  //   if (_formKey.currentState?.validate() ?? false) {
-  //     final String name = _nameController.text;
-  //     // final String number = _numberController.text;
-  //     final String message = _messageController.text;
-
-  //     print("Feedback submitted: $name, $message");
-
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text("Thank you for your feedback!")),
-  //     );
-
-  //     _nameController.clear();
-
-  //     _messageController.clear();
-  //   }
-  // }
+  File? _selectedProfileImage;
 
   void _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
+      if (_selectedProfileImage == null) {
+        // Show error if profile image is not selected
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please select a profile image')),
+        );
+        return; // Prevent form submission
+      }
+
       final String name = _nameController.text;
       final String message = _messageController.text;
 
@@ -55,10 +46,14 @@ class _FeedbackFormState extends State<TestimonialsForm> {
 
         if (_selectedImage != null) {
           request.files.add(
+            await http.MultipartFile.fromPath('image', _selectedImage!.path),
+          );
+        }
+
+        if (_selectedProfileImage != null) {
+          request.files.add(
             await http.MultipartFile.fromPath(
-              'profile_image',
-              _selectedImage!.path,
-            ),
+                'profile_image', _selectedProfileImage!.path),
           );
         }
 
@@ -66,7 +61,6 @@ class _FeedbackFormState extends State<TestimonialsForm> {
 
         if (response.statusCode == 200) {
           final responseBody = await response.stream.bytesToString();
-          print('Server response: $responseBody');
           final jsonResponse = jsonDecode(responseBody);
 
           if (jsonResponse['success'] == true) {
@@ -77,6 +71,7 @@ class _FeedbackFormState extends State<TestimonialsForm> {
             _messageController.clear();
             setState(() {
               _selectedImage = null;
+              _selectedProfileImage = null;
             });
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -92,19 +87,22 @@ class _FeedbackFormState extends State<TestimonialsForm> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
-        print('Error occurred: $e');
       }
     }
   }
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(bool isProfileImage) async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path); // Store the picked image file
+        if (isProfileImage) {
+          _selectedProfileImage = File(pickedFile.path);
+        } else {
+          _selectedImage = File(pickedFile.path);
+        }
       });
     }
   }
@@ -180,107 +178,123 @@ class _FeedbackFormState extends State<TestimonialsForm> {
                     ),
                     const SizedBox(height: 16),
 
-                    // // Phone number field
-                    // const Align(
-                    //   alignment: Alignment.centerLeft,
-                    //   child: Text(
-                    //     'Enter Your Number :',
-                    //     style: TextStyle(
-                    //       fontSize: 16.0,
-                    //       color: Palette.secondaryColor,
-                    //       fontWeight: FontWeight.w500,
-                    //       fontFamily: 'EuclidCircularA Medium',
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 4),
-                    // TextFormField(
-                    //   controller: _numberController,
-                    //   decoration: InputDecoration(
-                    //     prefixIcon:
-                    //         const Icon(Icons.phone, color: Color(0xFFD68D54)),
-                    //     hintText: 'Mobile Number',
-                    //     hintStyle: TextStyle(color: Colors.black54),
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(30.0),
-                    //       borderSide:
-                    //           const BorderSide(color: Color(0xFFD68D54)),
-                    //     ),
-                    //   ),
-                    //   keyboardType: TextInputType.phone,
-                    //   inputFormatters: [
-                    //     LengthLimitingTextInputFormatter(
-                    //         10), // Limit the number of characters to 10
-                    //     FilteringTextInputFormatter
-                    //         .digitsOnly, // Allow only digits
-                    //   ],
-                    //   validator: (value) {
-                    //     if (value == null || value.isEmpty) {
-                    //       return 'Please enter your phone number';
-                    //     } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                    //       return 'Please enter a valid 10-digit phone number';
-                    //     }
-                    //     return null;
-                    //   },
-                    // ),
-                    // const SizedBox(height: 16),
-// Select Image Button (added above the message field)
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Select Your Image :',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Palette.secondaryColor,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'EuclidCircularA Medium',
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 4),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _pickImage,
-                        icon: Icon(Icons.image, color: Color(0xFFD68D54)),
-                        label: Text(
-                          'Select Image',
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          'Select Image:',
                           style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 18,
+                              fontSize: 16.0,
+                              color: Palette.secondaryColor,
                               fontWeight: FontWeight.w500),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          // padding: const EdgeInsets.symmetric(vertical: 15.0),
-                          alignment: Alignment
-                              .centerLeft, // Aligns the content to the start
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15.0,
-                              horizontal: 16.0), // Adds horizontal spacing
-                          backgroundColor: Color.fromARGB(255, 245, 245, 245),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            side: BorderSide(color: Color(0xFFD68D54)),
+                        SizedBox(height: 4),
+                        // Button for selecting the main image
+                        ElevatedButton.icon(
+                          onPressed: () => _pickImage(false),
+                          icon: Icon(Icons.image, color: Color(0xFFD68D54)),
+                          label: Text(
+                            'Select Image',
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 16),
                           ),
-                          // alignment: Alignment.centerLeft,
+                          style: ElevatedButton.styleFrom(
+                            alignment: Alignment.centerLeft,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15.0, horizontal: 16.0),
+                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              side: BorderSide(color: Color(0xFFD68D54)),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+                        const SizedBox(height: 8),
 
-                    // Display the selected image (if any)
-                    _selectedImage != null
-                        ? Image.file(
-                            _selectedImage!,
-                            height: 50.0,
-                            width: 200.0,
-                            fit: BoxFit.cover,
-                          )
-                        : const SizedBox(height: 0), // No image selected
+                        // Display selected image with remove button overlay
+                        if (_selectedImage != null)
+                          Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              Image.file(
+                                _selectedImage!,
+                                height: 50, // Adjust height as needed
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete,
+                                    color: Color(0xFFD68D54)),
+                                onPressed: () {
+                                  setState(() {
+                                    _selectedImage = null;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+
+                        const SizedBox(height: 16),
+
+                        // Text description
+                        Text(
+                          'Select Profile Image:',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Palette.secondaryColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+
+                        // Button for selecting the profile image
+                        ElevatedButton.icon(
+                          onPressed: () => _pickImage(true),
+                          icon: Icon(Icons.image, color: Color(0xFFD68D54)),
+                          label: Text(
+                            'Select Profile Image',
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 16),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            alignment: Alignment.centerLeft,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15.0, horizontal: 16.0),
+                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              side: BorderSide(color: Color(0xFFD68D54)),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Display selected profile image with remove button overlay
+                        if (_selectedProfileImage != null)
+                          Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              Image.file(
+                                _selectedProfileImage!,
+                                height: 50, // Adjust height as needed
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete,
+                                    color: Color(0xFFD68D54)),
+                                onPressed: () {
+                                  setState(() {
+                                    _selectedProfileImage = null;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
 
                     const SizedBox(height: 16),
-
                     // Message field
                     const Align(
                       alignment: Alignment.centerLeft,

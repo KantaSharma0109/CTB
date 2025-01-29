@@ -82,9 +82,8 @@ class _MyOrdersState extends State<MyOrders> {
     });
     Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
       requestType: RequestType.GET,
-      url:
-          // '$url/users/getUserOrders/$user_id',
-          '${Constants.baseUrl}get_order.php??action=$getUserOrders&user_id=$user_id',
+      url: '$url/users/getUserOrders/$user_id',
+      // '${Constants.baseUrl}get_order.php?action=$getUserOrders&user_id=$user_id',
     );
     print(url);
     bool _status = _getNews['status'];

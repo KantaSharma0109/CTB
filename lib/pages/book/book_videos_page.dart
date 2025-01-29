@@ -148,9 +148,8 @@ class _BookVideosPageState extends State<BookVideosPage> {
   Future<void> getBookSubscription() async {
     Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
       requestType: RequestType.GET,
-      url:
-          // '$url/users/getBookVideosSubscription/${widget.book_id}/$user_id',
-          '${Constants.baseUrl}userSubscription.php?action=getBookVideosSubscription&book_id=${widget.book_id}&user_id=$user_id',
+      url: '$url/users/getBookVideosSubscription/${widget.book_id}/$user_id',
+      // '${Constants.baseUrl}userSubscription.php?action=getBookVideosSubscription&book_id=${widget.book_id}&user_id=$user_id',
     );
     // String url =
     //     '${Constants.baseUrl}userSubscription.php?action=getBookVideosSubscription&id=${widget.book_id}&user_id=$user_id';
@@ -206,8 +205,8 @@ class _BookVideosPageState extends State<BookVideosPage> {
     Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
       requestType: RequestType.GET,
       url:
-          // '$url/getBookVideos/${widget.book_id}?language_id=${Application.languageId}',
-          '${Constants.baseUrl}book.php?action=getBookVideos&id=${widget.book_id}&user_id=$user_id',
+          '$url/getBookVideos/${widget.book_id}?language_id=${Application.languageId}',
+      // '${Constants.baseUrl}book.php?action=getBookVideos&id=${widget.book_id}&user_id=$user_id',
     );
     print(url);
     print('book videoes page: $_getNews');

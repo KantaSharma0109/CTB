@@ -46,100 +46,99 @@ class _LiveClassesState extends State<LiveClasses> {
   // late Razorpay _razorpay;
   String liveId = '';
 
-  // Future<void> getLive() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final savedWallet = prefs.getString('wallet') ?? '0';
-  //   setState(() {
-  //     wallet = savedWallet;
-  //   });
-  //   Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
-  //     requestType: RequestType.GET,
-  //     url:
-  //         '$url/getUserLive/${Application.userId}?language_id=${Application.languageId}',
-  //   );
-  //   print(url);
-  //   bool _status = _getNews['status'];
-  //   print(_getNews);
-  //   var _data = _getNews['data'];
-  //   // Utility.printLog(_data.toString());
-  //   if (_status) {
-  //     liveList.clear();
-  //     _data[ApiKeys.data].forEach((live) {
-  //       liveList.add(Live.fromJson(live));
-  //     });
-  //     phoneNumber = Application.phoneNumber;
-  //     userName = Application.userName;
-  //     setState(() {
-  //       isLoading = true;
-  //     });
-  //     Utility.showProgress(false);
-  //   } else {
-  //     Utility.printLog('Something went wrong.');
-  //     Utility.showProgress(false);
-  //     Utility.databaseErrorPopup(context);
-  //   }
-  // }
-
   Future<void> getLive() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final savedWallet = prefs.getString('wallet') ?? '0';
-
     setState(() {
       wallet = savedWallet;
     });
-
-    try {
-      final userId =
-          Application.userId; // Ensure userId is a valid String/Number
-      final languageId =
-          Application.languageId; // Ensure languageId is a valid String/Number
-      final liveApiUrl =
-          'http://192.168.29.202:8080/taruna_birla_api/get_live.php';
-      final url =
-          Uri.parse('$liveApiUrl?user_id=$userId&language_id=$languageId');
-
-      print("Request URL: $url");
-      final response = await http.get(url);
-      print("Response: ${response.body}");
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> _getNews = jsonDecode(response.body);
-
-        if (_getNews['status'] == true) {
-          final List<dynamic> _data = _getNews['data'];
-          liveList.clear();
-
-          for (var live in _data) {
-            // Safely convert data types where necessary
-            live['subscribed'] =
-                int.tryParse(live['subscribed'].toString()) ?? 0;
-            live['live_users_count'] =
-                int.tryParse(live['live_users_count'].toString()) ?? 0;
-
-            liveList.add(Live.fromJson(live));
-          }
-
-          phoneNumber = Application.phoneNumber;
-          userName = Application.userName;
-
-          setState(() {
-            isLoading = true;
-          });
-
-          Utility.showProgress(false);
-        } else {
-          print('Error from API: ${_getNews['message']}');
-          Utility.showProgress(false);
-          Utility.databaseErrorPopup(context);
-        }
-      } else {
-        print('HTTP Error: Status Code ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Exception: $e');
+    Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
+      requestType: RequestType.GET,
+      url:
+          '$url/getUserLive/${Application.userId}?language_id=${Application.languageId}',
+    );
+    print(url);
+    bool _status = _getNews['status'];
+    print(_getNews);
+    var _data = _getNews['data'];
+    // Utility.printLog(_data.toString());
+    if (_status) {
+      liveList.clear();
+      _data[ApiKeys.data].forEach((live) {
+        liveList.add(Live.fromJson(live));
+      });
+      phoneNumber = Application.phoneNumber;
+      userName = Application.userName;
+      setState(() {
+        isLoading = true;
+      });
       Utility.showProgress(false);
+    } else {
+      Utility.printLog('Something went wrong.');
+      Utility.showProgress(false);
+      Utility.databaseErrorPopup(context);
     }
   }
+
+  // Future<void> getLive() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final savedWallet = prefs.getString('wallet') ?? '0';
+
+  //   setState(() {
+  //     wallet = savedWallet;
+  //   });
+
+  //   try {
+  //     final userId =
+  //         Application.userId; // Ensure userId is a valid String/Number
+  //     final languageId =
+  //         Application.languageId; // Ensure languageId is a valid String/Number
+  //     final liveApiUrl = '${Constants.baseUrl}/get_live.php';
+  //     final url =
+  //         Uri.parse('$liveApiUrl?user_id=$userId&language_id=$languageId');
+
+  //     print("Request URL: $url");
+  //     final response = await http.get(url);
+  //     print("Response: ${response.body}");
+
+  //     if (response.statusCode == 200) {
+  //       final Map<String, dynamic> _getNews = jsonDecode(response.body);
+
+  //       if (_getNews['status'] == true) {
+  //         final List<dynamic> _data = _getNews['data'];
+  //         liveList.clear();
+
+  //         for (var live in _data) {
+  //           // Safely convert data types where necessary
+  //           live['subscribed'] =
+  //               int.tryParse(live['subscribed'].toString()) ?? 0;
+  //           live['live_users_count'] =
+  //               int.tryParse(live['live_users_count'].toString()) ?? 0;
+
+  //           liveList.add(Live.fromJson(live));
+  //         }
+
+  //         phoneNumber = Application.phoneNumber;
+  //         userName = Application.userName;
+
+  //         setState(() {
+  //           isLoading = true;
+  //         });
+
+  //         Utility.showProgress(false);
+  //       } else {
+  //         print('Error from API: ${_getNews['message']}');
+  //         Utility.showProgress(false);
+  //         Utility.databaseErrorPopup(context);
+  //       }
+  //     } else {
+  //       print('HTTP Error: Status Code ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     print('Exception: $e');
+  //     Utility.showProgress(false);
+  //   }
+  // }
 
   Future<void> applePayment(String live_id, String payable_price) async {
     Map<String, dynamic> _updateCart = await MySqlDBService().runQuery(
@@ -186,21 +185,21 @@ class _LiveClassesState extends State<LiveClasses> {
     // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-    if (Platform.isIOS) {
-      // _insecureScreenDetector.initialize();
-      // _insecureScreenDetector.addListener(() {
-      //   Utility.printLog('add event listener');
-      //   Utility.forceLogoutUser(context);
-      //   // Utility.forceLogout(context);
-      // }, (isCaptured) {
-      //   Utility.printLog('screen recording event listener');
-      //   // Utility.forceLogoutUser(context);
-      //   // Utility.forceLogout(context);
-      //   setState(() {
-      //     _isCaptured = isCaptured;
-      //   });
-      // });
-    }
+    // if (Platform.isIOS) {
+    //   _insecureScreenDetector.initialize();
+    //   _insecureScreenDetector.addListener(() {
+    //     Utility.printLog('add event listener');
+    //     Utility.forceLogoutUser(context);
+    //     // Utility.forceLogout(context);
+    //   }, (isCaptured) {
+    //     Utility.printLog('screen recording event listener');
+    //     // Utility.forceLogoutUser(context);
+    //     // Utility.forceLogout(context);
+    //     setState(() {
+    //       _isCaptured = isCaptured;
+    //     });
+    //   });
+    // }
     Utility.showProgress(true);
     if (!kIsWeb) {
       _filterRetriever();

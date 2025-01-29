@@ -34,7 +34,7 @@ class MainContainerViewModel with ChangeNotifier {
   String _phoneNumber = '';
   String _languageId = '';
   List<ProductCategory> _productCategories = [];
-  List<SubCategory> _productSubCategories = [];
+  List<ProductSubCategory> _productSubCategories = [];
   List<CourseCategory> _courseCategories = [];
   List<AppSlider> _appslider = [];
   List<Course> _featured_courses = [];
@@ -60,7 +60,7 @@ class MainContainerViewModel with ChangeNotifier {
   String get phoneNumber => _phoneNumber;
   String get dynamicLinkUrl => _dynamicLinkUrl;
   List<ProductCategory> get productCategories => _productCategories;
-  List<SubCategory> get productSubCategories => _productSubCategories;
+  List<ProductSubCategory> get productSubCategories => _productSubCategories;
   List<CourseCategory> get courseCategories => _courseCategories;
   List<AppSlider> get appslider => _appslider;
   List<Course> get featured_courses => _featured_courses;
@@ -447,6 +447,7 @@ class MainContainerViewModel with ChangeNotifier {
     Application.phoneNumber = savedPhoneNumber;
     Application.languageId = savedLanguageId;
     Application.pincode = savedPincode;
+    String deviceToken = Application.deviceToken ?? '';
     if (savedLanguageId.isEmpty) {
       prefs.setString("language_id", '1');
       Application.languageId = '1';
@@ -456,7 +457,8 @@ class MainContainerViewModel with ChangeNotifier {
     try {
       // final String apiUrl = '${Constants.baseUrl}api.php'; // PHP API URL
       final String apiUrl =
-          '${Constants.baseUrl}api.php?user_id=${Application.userId}'; // Pass user_id to the API
+          // '${Constants.baseUrl}api.php?user_id=${Application.userId}'; // Pass user_id to the API
+          '${Constants.baseUrl}api.php?user_id=${Application.userId}&token=$deviceToken';
 
       final response = await http.get(Uri.parse(apiUrl));
 
@@ -736,6 +738,9 @@ class MainContainerViewModel with ChangeNotifier {
               );
             }
           }
+
+          // Handle notification count
+          // int notificationCount = data['data']['notification_count'] ?? 0;
 
           notifyListeners();
         } else {

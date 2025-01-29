@@ -18,6 +18,7 @@ class OtpUpScreen extends StatefulWidget {
   final String address;
   final String email;
   final String pincode;
+  final String countryCode;
   String verificationId;
 
   OtpUpScreen(
@@ -28,6 +29,7 @@ class OtpUpScreen extends StatefulWidget {
       required this.name,
       required this.address,
       required this.pincode,
+      required this.countryCode,
       required this.email});
 
   @override
@@ -98,6 +100,7 @@ class OtpUpScreenState extends State<OtpUpScreen> {
       'email': widget.email,
       'address': widget.address,
       'pincode': widget.pincode,
+      'countryCode': widget.countryCode,
       'deviceToken': deviceToken,
     };
 
@@ -129,9 +132,17 @@ class OtpUpScreenState extends State<OtpUpScreen> {
     }
   }
 
-  Future<void> getAppData() async {
+  // Future<void> getAppData() async {
+  //   await Provider.of<MainContainerViewModel>(context, listen: false)
+  //       .getAppData(context);
+  // }
+
+  Future<void> fetchData(BuildContext context) async {
+    // Wait for the data to be fetched before navigating
     await Provider.of<MainContainerViewModel>(context, listen: false)
-        .getAppData(context);
+        .fetchData();
+
+    // You can perform any necessary navigation after data is fetched if needed
   }
 
   @override
@@ -182,7 +193,7 @@ class OtpUpScreenState extends State<OtpUpScreen> {
                       SizedBox(height: 20),
 
                       // Text(
-                      //   "Sent on: $deviceToken",
+                      //   "Sent on: ${widget.countryCode}",
                       //   style: TextStyle(
                       //     color: Colors.grey,
                       //     fontSize: 14.0,
@@ -278,7 +289,8 @@ class OtpUpScreenState extends State<OtpUpScreen> {
                               prefs.setBool('is_logged_in', true);
 
                               // Ensure that app data is loaded
-                              await getAppData();
+                              // await getAppData();
+                              await fetchData(context);
 
                               Navigator.pushAndRemoveUntil(
                                 context,

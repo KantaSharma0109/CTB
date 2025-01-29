@@ -33,9 +33,9 @@ class _NotificationPageState extends State<NotificationPage> {
     Utility.showProgress(true);
 
     String url =
-        '${Constants.finalUrl}/users/getUserNotifications?user_id=${Application.userId}';
+        // '${Constants.finalUrl}/users/getUserNotifications?user_id=${Application.userId}';
 
-    // '${Constants.baseUrl}notifications.php?user_id=${Application.userId}';
+        '${Constants.baseUrl}notifications.php?user_id=${Application.userId}';
     Map<String, dynamic> _getResult =
         await ApiFunctions.getApiResult(url, Application.deviceToken);
 

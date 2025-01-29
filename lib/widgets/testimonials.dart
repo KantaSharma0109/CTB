@@ -101,7 +101,9 @@ class _TestimonialsState extends State<Testimonials> {
               image_path: item['image'].isNotEmpty
                   ? item['image']
                   : 'default_placeholder.png', // Use default placeholder if image is empty
-              profile_image: item['profile_image'],
+              profile_image: item['profile_image'].isNotEmpty
+                  ? item['image']
+                  : 'default_placeholder.png',
             ),
           );
         }
@@ -344,7 +346,7 @@ class _TestimonialsState extends State<Testimonials> {
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: CachedNetworkImage(
                                         imageUrl:
-                                            '${Constants.imgBackendUrl}${testimonials[index].profile_image}',
+                                            '${Constants.baseUrl}${testimonials[index].profile_image}',
 
                                         // Constants.imgBackendUrl +
                                         //     testimonials[index].profile_image.toString(),

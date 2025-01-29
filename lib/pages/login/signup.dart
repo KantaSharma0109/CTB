@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../../config/config.dart';
+import '../../utils/utility.dart';
 import '../startup/splash.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -16,6 +18,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  String completephonenumber = '';
   final idController = TextEditingController();
   final nameController = TextEditingController();
   final addressController = TextEditingController();
@@ -26,7 +29,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   static const double textBoxHeight = 55.0;
 
-  String countryCode = "+91";
+  // String countryCode = "+91";
+  String countryCode = "";
+  String phoneNumber = "";
 
   // void _sendOTP() {
   //   final phoneNumber = "$countryCode${phoneController.text.trim()}";
@@ -38,6 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // String verificationId = '';
   Future<void> _checkPhoneNumberAndSendOTP() async {
     final phoneNumber = phoneController.text.trim();
+
     if (phoneNumber.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please enter your mobile number.")),
@@ -105,6 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     pincode: pincodeController.text,
                     mobileNumber: phoneController.text,
                     verificationId: verificationId,
+                    countryCode: countryCode,
                   ),
                 ),
               );
@@ -185,14 +192,74 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                         // Phone Number Input Field
                         SizedBox(
-                          child: _buildInputField(
-                            controller: phoneController,
-                            label: "Mobile Number",
-                            icon: Icons.call,
-                            keyboardType: TextInputType.phone,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(10),
+                          // child: _buildInputField(
+                          //   controller: phoneController,
+                          //   label: "Mobile Number",
+                          //   icon: Icons.call,
+                          //   keyboardType: TextInputType.phone,
+                          //   inputFormatters: [
+                          //     FilteringTextInputFormatter.digitsOnly,
+                          //     LengthLimitingTextInputFormatter(10),
+                          //   ],
+                          // ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  child: IntlPhoneField(
+                                    initialCountryCode: 'IN',
+                                    controller: phoneController,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    textInputAction: TextInputAction.done,
+                                    dropdownDecoration: const BoxDecoration(
+                                        // color: Palette.white
+                                        ),
+                                    decoration: InputDecoration(
+                                      counterText: "",
+                                      hintText: "Mobile Number",
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFFD68D54),
+                                            width: 1.0,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(30.0)),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: Color(0xFFD68D54),
+                                              width: 1.0),
+                                          borderRadius:
+                                              BorderRadius.circular(30.0)),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 14.0, horizontal: 16.0),
+                                      filled: true,
+                                      fillColor: const Color.fromARGB(
+                                          255, 247, 247, 247),
+                                    ),
+                                    // onChanged: (phone) {
+                                    //   setState(() {
+                                    //     completephonenumber =
+                                    //         phone.completeNumber;
+                                    //   });
+                                    // },
+                                    onChanged: (phone) {
+                                      setState(() {
+                                        countryCode = phone.countryCode;
+                                        phoneNumber = phone.number;
+                                      });
+                                    },
+                                    onCountryChanged: (phone) {
+                                      Utility.printLog(
+                                          'Country code changed to: ');
+                                    },
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -228,8 +295,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             controller: pincodeController,
                             label: "pincode",
                             keyboardType: TextInputType.number,
-                            icon: Icons.lock,
-                            obscureText: true,
+                            icon: Icons.location_pin,
+                            // obscureText: true,
                           ),
                         ),
 

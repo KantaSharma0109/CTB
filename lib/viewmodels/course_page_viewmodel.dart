@@ -140,7 +140,7 @@ class CoursePageViewModel with ChangeNotifier {
   Future<void> getCourseData(BuildContext context,
       {bool isMoreData = false}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _userId = prefs.getString('user_id') ?? "";
+    _userId = prefs.getString('id') ?? "";
     _isSearching = false;
     _isReachedEnd = false;
     if (isMoreData) {
@@ -155,7 +155,7 @@ class CoursePageViewModel with ChangeNotifier {
     String getUrl =
         '${Constants.finalUrl}/courses_api/getCoursesByCategory?language_id=${Application.languageId}&category=$_selectedCategory&offset=$_offset&user_id=${Application.userId}';
     // '${Constants.baseUrl}course.php?action=getCoursesByCategory&category=$_selectedCategory&offset=$_offset&user_id=$_userId';
-
+    print(getUrl);
     Map<String, dynamic> _getResult =
         await ApiFunctions.getApiResult(getUrl, Application.deviceToken);
 

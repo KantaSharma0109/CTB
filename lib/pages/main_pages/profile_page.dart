@@ -1716,7 +1716,7 @@ class _ProfilePageState extends State<ProfilePage> {
     Application.phoneNumber = '';
     Application.languageId = '';
     Application.pincode = '';
-
+    Application.address = '';
     // Reset any provider state or other application states
     Provider.of<MainContainerViewModel>(context, listen: false).setIndex(0);
 

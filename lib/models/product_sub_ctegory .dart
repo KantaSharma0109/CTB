@@ -1,20 +1,19 @@
-class SubCategory {
+class ProductSubCategory {
   final int id;
   final String name;
   final int categoryId;
   final int status;
-
-  SubCategory({
+  ProductSubCategory({
     required this.id,
     required this.name,
     required this.categoryId,
     required this.status,
   });
 
-  factory SubCategory.fromJson(Map<String, dynamic> json) {
-    return SubCategory(
+  factory ProductSubCategory.fromJson(Map<String, dynamic> json) {
+    return ProductSubCategory(
       id: json['id'],
-      name: json['name'],
+      name: json['name'].toString(),
       categoryId: json['category_id'],
       status: json['status'],
     );

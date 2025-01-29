@@ -469,25 +469,26 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
-    // _filterRetriever();
+    _filterRetriever();
     // _razorpay = Razorpay();
     // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     // if (Platform.isIOS) {
-    // _insecureScreenDetector.initialize();
-    // _insecureScreenDetector.addListener(() {
-    //   Utility.printLog('add event listener');
-    //   Utility.forceLogoutUser(context);
-    //   // Utility.forceLogout(context);
-    // }, (isCaptured) {
-    //   Utility.printLog('screen recording event listener');
-    //   // Utility.forceLogoutUser(context);
-    //   // Utility.forceLogout(context);
-    //   setState(() {
-    //     _isCaptured = isCaptured;
+    //   _insecureScreenDetector.initialize();
+    //   _insecureScreenDetector.addListener(()
+    //    {
+    //     Utility.printLog('add event listener');
+    //     Utility.forceLogoutUser(context);
+    //     // Utility.forceLogout(context);
+    //   }, (isCaptured) {
+    //     Utility.printLog('screen recording event listener');
+    //     // Utility.forceLogoutUser(context);
+    //     // Utility.forceLogout(context);
+    //     setState(() {
+    //       _isCaptured = isCaptured;
+    //     });
     //   });
-    // });
     // }
     if (!kIsWeb) {
       _filterRetriever();

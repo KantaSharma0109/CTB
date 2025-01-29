@@ -215,104 +215,109 @@ class BookCard extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
-          child: Stack(
-            children: [
-              CachedNetworkImage(
-                imageUrl: '$image',
-                placeholder: (context, url) => const ImagePlaceholder(),
-                errorWidget: (context, url, error) => const ImagePlaceholder(),
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-              // Positioned(
-              //   top: 5,
-              //   right: 5,
-              //   child: Container(
-              //     decoration: BoxDecoration(
-              //       color: Palette.shadowColorTwo,
-              //       borderRadius: BorderRadius.circular(50),
-              //       border: Border.all(
-              //         width: 1.0,
-              //         color: Palette.secondaryColor,
-              //       ),
-              //     ),
-              //     child: Padding(
-              //       padding: const EdgeInsets.symmetric(
-              //         vertical: 4.0,
-              //         horizontal: 8.0,
-              //       ),
-              //       child: Text(
-              //         category,
-              //         style: const TextStyle(
-              //           color: Palette.secondaryColor,
-              //           fontSize: 14.0,
-              //           fontFamily: 'EuclidCircularA Medium',
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // )
-              if (category.toLowerCase() != 'e_book')
-                Positioned(
-                  top: 5,
-                  right: 5,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Palette.shadowColorTwo,
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        width: 1.0,
-                        color: Palette.secondaryColor,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4.0,
-                        horizontal: 8.0,
-                      ),
-                      child: Text(
-                        category,
-                        style: const TextStyle(
+          child: SizedBox(
+            width: double.infinity, // Constrain width
+            height: 200.0,
+            child: Stack(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: '$image',
+                  placeholder: (context, url) => const ImagePlaceholder(),
+                  errorWidget: (context, url, error) =>
+                      const ImagePlaceholder(),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+                // Positioned(
+                //   top: 5,
+                //   right: 5,
+                //   child: Container(
+                //     decoration: BoxDecoration(
+                //       color: Palette.shadowColorTwo,
+                //       borderRadius: BorderRadius.circular(50),
+                //       border: Border.all(
+                //         width: 1.0,
+                //         color: Palette.secondaryColor,
+                //       ),
+                //     ),
+                //     child: Padding(
+                //       padding: const EdgeInsets.symmetric(
+                //         vertical: 4.0,
+                //         horizontal: 8.0,
+                //       ),
+                //       child: Text(
+                //         category,
+                //         style: const TextStyle(
+                //           color: Palette.secondaryColor,
+                //           fontSize: 14.0,
+                //           fontFamily: 'EuclidCircularA Medium',
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // )
+                if (category.toLowerCase() != 'e_book')
+                  Positioned(
+                    top: 5,
+                    right: 5,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Palette.shadowColorTwo,
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(
+                          width: 1.0,
                           color: Palette.secondaryColor,
-                          fontSize: 14.0,
-                          fontFamily: 'EuclidCircularA Medium',
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 4.0,
+                          horizontal: 8.0,
+                        ),
+                        child: Text(
+                          category,
+                          style: const TextStyle(
+                            color: Palette.secondaryColor,
+                            fontSize: 14.0,
+                            fontFamily: 'EuclidCircularA Medium',
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              // Text(
-              //   'ID: \nName: $name', // Display ID and Name
-              //   style: const TextStyle(
-              //     color: Colors.white,
-              //     fontSize: 14.0,
-              //   ),
-              // ),
+                // Text(
+                //   'ID: \nName: $name', // Display ID and Name
+                //   style: const TextStyle(
+                //     color: Colors.white,
+                //     fontSize: 14.0,
+                //   ),
+                // ),
 
-              Positioned(
-                bottom: 5,
-                right: 5,
-                child: GestureDetector(
-                  // onTap: () => addToCart(context), // Call addToCart on tap
+                // Positioned(
+                //   bottom: 5,
+                //   right: 5,
+                //   child: GestureDetector(
+                // onTap: () => addToCart(context), // Call addToCart on tap
 
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFFD68D54),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 25.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+                // child: Container(
+                // decoration: BoxDecoration(
+                //   color: Color(0xFFD68D54),
+                //   borderRadius: BorderRadius.circular(10),
+                // ),
+                // child: Padding(
+                //   padding: const EdgeInsets.all(5.0),
+                //   child: Icon(
+                //     Icons.add,
+                //     color: Colors.white,
+                //     size: 25.0,
+                //   ),
+                // ),
+                // ),
+                // ),
+                // ),
+              ],
+            ),
           ),
         ),
       ),

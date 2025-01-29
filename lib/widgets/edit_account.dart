@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../config/config.dart';
@@ -8,6 +10,9 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../pages/startup/splash.dart';
+import '../viewmodels/main_container_viewmodel.dart';
 
 class EditAccount extends StatefulWidget {
   const EditAccount({super.key});
@@ -46,67 +51,90 @@ class _EditAccountState extends State<EditAccount> {
     loadUserData(); // Call the method to load user data from SharedPreferences
   }
 
-  Future<void> _submitForm() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final String name = _nameController.text;
-      final String number = _numberController.text;
-      final String message = _bioController.text;
+  Future<void> _editAccount() async {
+    if (_formKey.currentState!.validate()) {
+      // Get the updated values from the controllers
+      String updatedName = _nameController.text;
+      String updatedNumber = _numberController.text;
+      String updatedEmail = _emailController.text;
+      String updatedAddress = _addressController.text;
 
+      // Get the user ID from SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      final String? userId = prefs.getString('id');
+      String? userId = prefs.getString(
+          'id'); // Ensure you have the user ID stored in SharedPreferences
 
-      if (userId == null || userId.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("User ID not found. Please log in.")),
-        );
+      if (userId == null) {
+        // Handle case where user ID is not available
+        print('User ID not found');
         return;
       }
 
+      // Prepare the data to send in the request
+      Map<String, String> data = {
+        'id': userId,
+        'name': updatedName,
+        'phone_number': updatedNumber,
+        'email_id': updatedEmail,
+        'address': updatedAddress,
+      };
+
+      // Make the API request to update the user data
       try {
         final response = await http.post(
-          Uri.parse('${Constants.baseUrl}feedback.php'),
-          body: {
-            'user_id': userId,
-            'name': name,
-            'number': number,
-            'message': message,
-          },
+          Uri.parse('${Constants.baseUrl}edit_account.php'),
+          body: data,
         );
 
         if (response.statusCode == 200) {
-          final result = json.decode(response.body);
-          if (result['status'] == 'success') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Thank you for your feedback!")),
-            );
-            _bioController.clear();
-          } else if (result['status'] == 'duplicate') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text("You have already submitted feedback.")),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(result['message'] ?? "Something went wrong.")),
-            );
-          }
-        } else {
+          // Handle success
+          print('User details updated successfully');
+
+          // Show a Snackbar with a success message
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text("Server error. Please try again later.")),
+            SnackBar(
+              content: Text("Your account details have been updated."),
+              backgroundColor: Color(0xFFD68D54),
+            ),
           );
+
+          // Clear the user data from SharedPreferences to log them out
+          await prefs
+              .clear(); // This will remove all stored data, or you can remove specific keys
+
+          // Optionally, navigate to the login screen or another page
+          Navigator.pop(context); // Close the dialog.
+          _logout(context); // Replace '/login' with your login screen route
+        } else {
+          print('Failed to update user details');
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("An error occurred: $e")),
-        );
+        print('Error: $e');
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("All fields are required")),
-      );
     }
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    // Sign out from Firebase
+    await FirebaseAuth.instance.signOut();
+
+    // Reset the application state or any global variables you need to reset
+    Application.userId = '';
+    Application.phoneNumber = '';
+    Application.languageId = '';
+    Application.pincode = '';
+    Application.address = '';
+    // Reset any provider state or other application states
+    Provider.of<MainContainerViewModel>(context, listen: false).setIndex(0);
+
+    // Navigate to SplashScreen or MainContainer, clearing the navigation stack
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => SplashScreen()),
+      (route) => false, // Remove all previous routes
+    );
   }
 
   // Method to load user data from SharedPreferences
@@ -401,44 +429,44 @@ class _EditAccountState extends State<EditAccount> {
                               return null;
                             },
                           ),
-                          const SizedBox(height: 16),
-                          const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Bio :',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                color: Palette.secondaryColor,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'EuclidCircularA Medium',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          TextFormField(
-                            controller: _bioController,
-                            decoration: InputDecoration(
-                              hintText: 'Bio',
-                              hintStyle: TextStyle(color: Colors.black54),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                                borderSide:
-                                    const BorderSide(color: Color(0xFFD68D54)),
-                              ),
-                            ),
-                            maxLines: 4,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your Bio';
-                              }
-                              return null;
-                            },
-                          ),
+                          // const SizedBox(height: 16),
+                          // const Align(
+                          //   alignment: Alignment.centerLeft,
+                          //   child: Text(
+                          //     'Bio :',
+                          //     style: TextStyle(
+                          //       fontSize: 16.0,
+                          //       color: Palette.secondaryColor,
+                          //       fontWeight: FontWeight.w500,
+                          //       fontFamily: 'EuclidCircularA Medium',
+                          //     ),
+                          //   ),
+                          // ),
+                          // const SizedBox(height: 4),
+                          // TextFormField(
+                          //   controller: _bioController,
+                          //   decoration: InputDecoration(
+                          //     hintText: 'Bio',
+                          //     hintStyle: TextStyle(color: Colors.black54),
+                          //     border: OutlineInputBorder(
+                          //       borderRadius: BorderRadius.circular(30.0),
+                          //       borderSide:
+                          //           const BorderSide(color: Color(0xFFD68D54)),
+                          //     ),
+                          //   ),
+                          //   maxLines: 4,
+                          //   validator: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return 'Please enter your Bio';
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
                           const SizedBox(height: 16),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: _submitForm,
+                              onPressed: _editAccount,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFD68D54),
                                 padding:

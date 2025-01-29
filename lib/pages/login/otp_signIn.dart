@@ -103,9 +103,16 @@ class OtpInScreenState extends State<OtpInScreen> {
     );
   }
 
-  Future<void> getAppData() async {
+  // Future<void> getAppData() async {
+  //   await Provider.of<MainContainerViewModel>(context, listen: false)
+  //       .getAppData(context);
+  // }
+  Future<void> fetchData(BuildContext context) async {
+    // Wait for the data to be fetched before navigating
     await Provider.of<MainContainerViewModel>(context, listen: false)
-        .getAppData(context);
+        .fetchData();
+
+    // You can perform any necessary navigation after data is fetched if needed
   }
 
   @override
@@ -252,7 +259,8 @@ class OtpInScreenState extends State<OtpInScreen> {
                                   await SharedPreferences.getInstance();
                               prefs.setBool('is_logged_in', true);
 
-                              await getAppData();
+                              await fetchData(context);
+                              // getAppData();
 
                               Navigator.pushAndRemoveUntil(
                                 context,

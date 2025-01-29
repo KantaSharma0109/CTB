@@ -5,8 +5,8 @@ class Constants {
   static bool isDevelopment = false;
 
   //Backendurls
-  // static const String baseUrl = "http://192.168.29.202:8080/taruna_birla_api/";
-  static const String baseUrl = "http://dashboard.cheftarunabirla.com:8080/";
+  static const String baseUrl = "http://192.168.29.202:8080/taruna_birla_api/";
+  // static const String baseUrl = "http://dashboard.cheftarunabirla.com:8080/";
 
   static String devBackendUrl = 'http://192.168.0.108:3000';
   static String prodBackendUrl = 'https://dashboard.cheftarunabirla.com';

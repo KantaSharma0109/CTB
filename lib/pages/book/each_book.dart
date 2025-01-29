@@ -952,22 +952,22 @@ class _EachBookState extends State<EachBook>
   }
 
   Future<void> getBookImages() async {
-    // Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
-    //   requestType: RequestType.GET,
-    //   url: '$url/getImages/${widget.id}',
-    // );
-    String completeUrl =
-        // '$url/getUserBookbyId/${widget.id}/${Application.userId}?language_id=${Application.languageId}';
-        '${Constants.baseUrl}getBookImg.php?id=${widget.id}';
-
-// Print the complete URL
-    print('Complete URL: $completeUrl');
-
-// Make the API call
     Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
       requestType: RequestType.GET,
-      url: completeUrl,
+      url: '$url/getImages/${widget.id}',
     );
+//     String completeUrl =
+//         // '$url/getUserBookbyId/${widget.id}/${Application.userId}?language_id=${Application.languageId}';
+//         '${Constants.baseUrl}getBookImg.php?id=${widget.id}';
+
+// // Print the complete URL
+//     print('Complete URL: $completeUrl');
+
+// // Make the API call
+//     Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
+//       requestType: RequestType.GET,
+//       url: completeUrl,
+//     );
 
     // print('book url: ${url}');
 
@@ -1036,118 +1036,118 @@ class _EachBookState extends State<EachBook>
       _pincode.text = Application.pincode;
     });
 
-    // Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
-    //   requestType: RequestType.GET,
-    //   url:
-    //       '$url/getUserBookbyId/${widget.id}/${Application.userId}?language_id=${Application.languageId}',
-    // );
-    // Build the complete URL
-    String completeUrl =
-        // '$url/getUserBookbyId/${widget.id}/${Application.userId}?language_id=${Application.languageId}';
-        '${Constants.baseUrl}book.php?action=getUserBookById&id=${widget.id}&user_id=${Application.userId}&language_id=${Application.languageId}';
-
-// Print the complete URL
-    print('Complete URL: $completeUrl');
-
-// Make the API call
     Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
       requestType: RequestType.GET,
-      url: completeUrl,
+      url:
+          '$url/getUserBookbyId/${widget.id}/${Application.userId}?language_id=${Application.languageId}',
     );
+    // Build the complete URL
+//     String completeUrl =
+//         '$url/getUserBookbyId/${widget.id}/${Application.userId}?language_id=${Application.languageId}';
+//     // '${Constants.baseUrl}book.php?action=getUserBookById&id=${widget.id}&user_id=${Application.userId}&language_id=${Application.languageId}';
+
+// // Print the complete URL
+//     print('Complete URL: $completeUrl');
+
+// // Make the API call
+//     Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
+//       requestType: RequestType.GET,
+//       url: completeUrl,
+//     );
 
     bool _status = _getNews['status'];
     var _data = _getNews['data'];
     print(_data);
     if (_status) {
       setState(() {
-        //   name = _data['data'][0]['title'].toString();
-        //   description = _data['data'][0]['description'].toString();
-        //   category = _data['data'][0]['category'].toString();
-        //   price = _data['data'][0]['price'].toString();
-        //   discount_price = _data['data'][0]['discount_price'].toString();
-        //   pdflink = _data['data'][0]['pdf'].toString() == 'null'
-        //       ? ''
-        //       : _data['data'][0]['pdf'].toString();
-        //   share_url = _data['data'][0]['share_url'].toString();
-        //   // days = _data['data'][0]['days'];
-        //   days = int.tryParse(_data['data'][0]['days'].toString()) ?? 0;
-        //   count = _data['data'][0]['count'];
-        //   price_with_video = _data['data'][0]['price_with_video'].toString();
-        //   discount_price_with_video =
-        //       _data['data'][0]['discount_price_with_video'].toString();
-        //   video_days = _data['data'][0]['video_days'];
-        //   only_video_price = _data['data'][0]['only_video_price'].toString();
-        //   only_video_discount_price =
-        //       _data['data'][0]['only_video_discount_price'].toString();
-        //   include_videos = _data['data'][0]['include_videos'].toString();
-        //   share_text = _data['shareText'].toString();
-        //   // print('Title: $name');
-        //   // print('Description: $description');
-        //   // print('Category: $category');
-        //   // print('Price: $price');
-        //   // print('Discount Price: $discount_price');
-        //   // print('PDF Link: $pdflink');
-        //   // print('Share URL: $share_url');
-        //   print('Days: $days');
-        //   // print('Count: $count');
-        //   // print('Price with Video: $price_with_video');
-        //   // print('Discount Price with Video: $discount_price_with_video');
-        //   // print('Video Days: $video_days');
-        //   // print('Only Video Price: $only_video_price');
-        //   // print('Only Video Discount Price: $only_video_discount_price');
-        //   // print('Include Videos: $include_videos');
-        //   // print('Share Text: $share_text');
-        // });
         name = _data['data'][0]['title'].toString();
         description = _data['data'][0]['description'].toString();
         category = _data['data'][0]['category'].toString();
         price = _data['data'][0]['price'].toString();
-        print('price Value from API: $price');
         discount_price = _data['data'][0]['discount_price'].toString();
         pdflink = _data['data'][0]['pdf'].toString() == 'null'
             ? ''
             : _data['data'][0]['pdf'].toString();
         share_url = _data['data'][0]['share_url'].toString();
-
-        // Safely parse 'days' value
-        // var daysValue = _data['data'][0]['days'];
+        // days = _data['data'][0]['days'];
         days = int.tryParse(_data['data'][0]['days'].toString()) ?? 0;
-        print('Days Value from API: $days');
-
-        // // Handle cases where 'days' might not be a valid integer
-        // days = (daysValue is String)
-        //     ? int.tryParse(daysValue) ?? 0
-        //     : (daysValue is int)
-        //         ? daysValue
-        //         : 0;
-
-        // count = _data['data'][0]['count'];
-        count = int.tryParse(_data['data'][0]['count'].toString()) ?? 0;
-        print('price Value from API: $price');
+        count = _data['data'][0]['count'];
         price_with_video = _data['data'][0]['price_with_video'].toString();
-        print(' price_with_video from API: $price_with_video');
         discount_price_with_video =
             _data['data'][0]['discount_price_with_video'].toString();
-        print('discount_price_with_video from API: $discount_price_with_video');
-        // video_days = _data['data'][0]['video_days'];
-        video_days =
-            int.tryParse(_data['data'][0]['video_days'].toString()) ?? 0;
-        print(' video_daysfrom API: $video_days');
-
+        video_days = _data['data'][0]['video_days'];
         only_video_price = _data['data'][0]['only_video_price'].toString();
-        print(' only_video_price from API: $only_video_price');
         only_video_discount_price =
             _data['data'][0]['only_video_discount_price'].toString();
-        print(
-            ' only_video_discount_price from API: $only_video_discount_price');
-
         include_videos = _data['data'][0]['include_videos'].toString();
-        print('include_videos from API: $include_videos');
         share_text = _data['shareText'].toString();
-        print(' share_text from API: $share_text');
-
+        // print('Title: $name');
+        // print('Description: $description');
+        // print('Category: $category');
+        // print('Price: $price');
+        // print('Discount Price: $discount_price');
+        // print('PDF Link: $pdflink');
+        // print('Share URL: $share_url');
         print('Days: $days');
+        // print('Count: $count');
+        // print('Price with Video: $price_with_video');
+        // print('Discount Price with Video: $discount_price_with_video');
+        // print('Video Days: $video_days');
+        // print('Only Video Price: $only_video_price');
+        // print('Only Video Discount Price: $only_video_discount_price');
+        // print('Include Videos: $include_videos');
+        // print('Share Text: $share_text');
       });
+      //   name = _data['data'][0]['title'].toString();
+      //   description = _data['data'][0]['description'].toString();
+      //   category = _data['data'][0]['category'].toString();
+      //   price = _data['data'][0]['price'].toString();
+      //   print('price Value from API: $price');
+      //   discount_price = _data['data'][0]['discount_price'].toString();
+      //   pdflink = _data['data'][0]['pdf'].toString() == 'null'
+      //       ? ''
+      //       : _data['data'][0]['pdf'].toString();
+      //   share_url = _data['data'][0]['share_url'].toString();
+
+      //   // Safely parse 'days' value
+      //   // var daysValue = _data['data'][0]['days'];
+      //   days = int.tryParse(_data['data'][0]['days'].toString()) ?? 0;
+      //   print('Days Value from API: $days');
+
+      //   // // Handle cases where 'days' might not be a valid integer
+      //   // days = (daysValue is String)
+      //   //     ? int.tryParse(daysValue) ?? 0
+      //   //     : (daysValue is int)
+      //   //         ? daysValue
+      //   //         : 0;
+
+      //   // count = _data['data'][0]['count'];
+      //   count = int.tryParse(_data['data'][0]['count'].toString()) ?? 0;
+      //   print('price Value from API: $price');
+      //   price_with_video = _data['data'][0]['price_with_video'].toString();
+      //   print(' price_with_video from API: $price_with_video');
+      //   discount_price_with_video =
+      //       _data['data'][0]['discount_price_with_video'].toString();
+      //   print('discount_price_with_video from API: $discount_price_with_video');
+      //   // video_days = _data['data'][0]['video_days'];
+      //   video_days =
+      //       int.tryParse(_data['data'][0]['video_days'].toString()) ?? 0;
+      //   print(' video_daysfrom API: $video_days');
+
+      //   only_video_price = _data['data'][0]['only_video_price'].toString();
+      //   print(' only_video_price from API: $only_video_price');
+      //   only_video_discount_price =
+      //       _data['data'][0]['only_video_discount_price'].toString();
+      //   print(
+      //       ' only_video_discount_price from API: $only_video_discount_price');
+
+      //   include_videos = _data['data'][0]['include_videos'].toString();
+      //   print('include_videos from API: $include_videos');
+      //   share_text = _data['shareText'].toString();
+      //   print(' share_text from API: $share_text');
+
+      //   print('Days: $days');
+      // });
       getBookImages();
     } else {
       Utility.printLog('Something went wrong.');

@@ -174,7 +174,7 @@ class _MyCoursesState extends State<MyCourses> {
     } else {
       Utility.printLog('Something went wrong.');
       Utility.showProgress(false);
-      Utility.databaseErrorPopup(context);
+      // Utility.databaseErrorPopup(context);
     }
   }
 

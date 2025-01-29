@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl_phone_field/intl_phone_field.dart';
+
+import '../../utils/utility.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -25,7 +28,9 @@ class SignInScreenState extends State<SignInScreen> {
   bool isOtpScreen = false;
 
   final TextEditingController phoneController = TextEditingController();
-  String countryCode = "+91"; // Country code is set to +91
+  // String countryCode = "+91"; // Country code is set to +91
+  String countryCode = "";
+  String phoneNumber = "";
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String verificationId = '';
 
@@ -108,6 +113,7 @@ class SignInScreenState extends State<SignInScreen> {
       var response = await http.post(url, body: {
         'phone_number':
             phoneNumber, // Send only the phone number without the country code
+        // 'country': countryCode, // Send the country code
       });
 
       print("Response: ${response.body}");
@@ -116,7 +122,7 @@ class SignInScreenState extends State<SignInScreen> {
       if (responseData['status'] == 'success') {
         var userData = responseData['user_data'];
 
-        String fullPhoneNumber = "+91" + phoneController.text.trim();
+        String fullPhoneNumber = countryCode + phoneController.text.trim();
 
         await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: fullPhoneNumber,
@@ -220,38 +226,97 @@ class SignInScreenState extends State<SignInScreen> {
                           border: Border.all(color: Color(0xFFD68D54)),
                           borderRadius: BorderRadius.circular(30.0),
                         ),
+                        // child: Row(
+                        //   children: [
+                        //     Container(
+                        //       padding: EdgeInsets.symmetric(horizontal: 13.0),
+                        //       decoration: BoxDecoration(
+                        //         border: Border(
+                        //             right:
+                        //                 BorderSide(color: Color(0xFFD68D54))),
+                        //       ),
+                        //       child: Text(
+                        //         countryCode,
+                        //         style: TextStyle(
+                        //           fontSize: 16.0,
+                        //           fontWeight: FontWeight.bold,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     Expanded(
+                        //       child: TextField(
+                        //         controller: phoneController,
+                        //         keyboardType: TextInputType.number,
+                        //         inputFormatters: [
+                        //           FilteringTextInputFormatter.digitsOnly,
+                        //           LengthLimitingTextInputFormatter(10),
+                        //         ],
+                        //         decoration: InputDecoration(
+                        //           labelText: "Mobile Number",
+                        //           prefixIcon: Icon(
+                        //             Icons.call,
+                        //             color: Color(0xFFD68D54),
+                        //           ),
+                        //           border: InputBorder.none,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                         child: Row(
                           children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 13.0),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                    right:
-                                        BorderSide(color: Color(0xFFD68D54))),
-                              ),
-                              child: Text(
-                                countryCode,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
                             Expanded(
-                              child: TextField(
-                                controller: phoneController,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(10),
-                                ],
-                                decoration: InputDecoration(
-                                  labelText: "Mobile Number",
-                                  prefixIcon: Icon(
-                                    Icons.call,
-                                    color: Color(0xFFD68D54),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(30.0),
+                                child: IntlPhoneField(
+                                  initialCountryCode: 'IN',
+                                  controller: phoneController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  textInputAction: TextInputAction.done,
+                                  dropdownDecoration: const BoxDecoration(
+                                      // color: Palette.white
+                                      ),
+                                  decoration: InputDecoration(
+                                    counterText: "",
+                                    hintText: "Mobile Number",
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: Color(0xFFD68D54),
+                                          width: 1.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(30.0)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFD68D54),
+                                            width: 1.0),
+                                        borderRadius:
+                                            BorderRadius.circular(30.0)),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 14.0, horizontal: 16.0),
+                                    filled: true,
+                                    fillColor: const Color.fromARGB(
+                                        255, 247, 247, 247),
                                   ),
-                                  border: InputBorder.none,
+                                  // onChanged: (phone) {
+                                  //   setState(() {
+                                  //     completephonenumber =
+                                  //         phone.completeNumber;
+                                  //   });
+                                  // },
+                                  onChanged: (phone) {
+                                    setState(() {
+                                      countryCode = phone.countryCode;
+                                      phoneNumber = phone.number;
+                                    });
+                                  },
+                                  onCountryChanged: (phone) {
+                                    Utility.printLog(
+                                        'Country code changed to: ');
+                                  },
                                 ),
                               ),
                             ),

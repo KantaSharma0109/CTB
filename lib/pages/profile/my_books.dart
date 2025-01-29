@@ -135,27 +135,15 @@ class _MyBooksState extends State<MyBooks> {
 
   Future<void> getUserCourses() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString('user_id') ?? '';
+    final userId = prefs.getString('id') ?? '';
     setState(() {
       user_id = userId;
     });
-    // Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
-    //   requestType: RequestType.GET,
-    //   url:
-    //       '$url/users/getUserBooks/$user_id?language_id=${Application.languageId}',
-    // );
-
-    String completeUrl =
-        // '$url/getUserBookbyId/${widget.id}/${Application.userId}?language_id=${Application.languageId}';
-        '${Constants.baseUrl}book.php?action=getUserBooks&user_id=${Application.userId}&language_id=${Application.languageId}';
-
-// Print the complete URL
-    print('Complete URL: $completeUrl');
-
-// Make the API call
     Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
       requestType: RequestType.GET,
-      url: completeUrl,
+      url:
+          '$url/users/getUserBooks/$user_id?language_id=${Application.languageId}',
+      // '${Constants.baseUrl}get_userBook.php?user_id=$user_id'
     );
 
     bool _status = _getNews['status'];

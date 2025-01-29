@@ -129,6 +129,8 @@ class _ProductPageState extends State<ProductPage>
   @override
   void initState() {
     super.initState();
+    Provider.of<ProductPageViewModel>(context, listen: false).getSliderData();
+
     //get Product Data
     getProductData();
   }
@@ -251,45 +253,48 @@ class _ProductPageState extends State<ProductPage>
                   ),
                 ),
               ),
-              // Padding(
-              //   padding:
-              //       const EdgeInsets.symmetric(vertical: 0.0, horizontal: 24.0),
-              //   child: GestureDetector(
-              //     onTap: () {
-              //       Utility.openWhatsapp(context);
-              //     },
-              //     child: Container(
-              //       decoration: BoxDecoration(
-              //           color: Palette.shadowColorTwo,
-              //           borderRadius: BorderRadius.circular(8.0),
-              //           border: Border.all(
-              //               width: 2.0, color: Palette.secondaryColor)),
-              //       child: Padding(
-              //         padding: const EdgeInsets.symmetric(
-              //             vertical: 10.0, horizontal: 10.0),
-              //         child: Row(
-              //           mainAxisAlignment: MainAxisAlignment.start,
-              //           children: [
-              //             Expanded(
-              //               child: Text(
-              //                 'For customise cake click here.. !!',
-              //                 style: TextStyle(
-              //                   color: Palette.secondaryColor,
-              //                   fontSize: 16.0,
-              //                   fontFamily: 'EuclidCircularA Medium',
-              //                 ),
-              //               ),
-              //             ),
-              //             Icon(
-              //               MdiIcons.arrowRight,
-              //               color: Palette.secondaryColor,
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
+              const SizedBox(
+                height: 15.0,
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 0.0, horizontal: 24.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Utility.openWhatsapp(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Palette.contrastColor,
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(
+                            width: 2.0, color: Palette.contrastColor)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'For customise cake click here.. !!',
+                              style: TextStyle(
+                                color: Palette.white,
+                                fontSize: 16.0,
+                                fontFamily: 'EuclidCircularA Medium',
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            MdiIcons.arrowRight,
+                            color: Palette.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(
                 height: 15.0,
               ),
@@ -383,6 +388,32 @@ class _ProductPageState extends State<ProductPage>
                   itemBuilder: (BuildContext context, int index) {
                     return GestureDetector(
                       onTap: () {
+                        // Provider.of<ProductPageViewModel>(context,
+                        //         listen: false)
+                        //     .setSelectedCategory(
+                        //         Provider.of<MainContainerViewModel>(context,
+                        //                 listen: false)
+                        //             .productCategories[index]
+                        //             .name);
+                        // Provider.of<ProductPageViewModel>(context,
+                        //         listen: false)
+                        //     .fetchSubCategories(
+                        //         Provider.of<MainContainerViewModel>(context,
+                        //                 listen: false)
+                        //             .productCategories[index]
+                        //             .id
+                        //             .toString());
+
+                        // Provider.of<ProductPageViewModel>(context,
+                        //         listen: false)
+                        //     .getProductData(context);
+
+                        // Reset the selected subcategory when selecting a new category
+                        Provider.of<ProductPageViewModel>(context,
+                                listen: false)
+                            .setSelectedSubCategory('');
+
+                        // Set the new selected category
                         Provider.of<ProductPageViewModel>(context,
                                 listen: false)
                             .setSelectedCategory(
@@ -390,6 +421,18 @@ class _ProductPageState extends State<ProductPage>
                                         listen: false)
                                     .productCategories[index]
                                     .name);
+
+                        // Fetch subcategories for the selected category
+                        Provider.of<ProductPageViewModel>(context,
+                                listen: false)
+                            .fetchSubCategories(
+                                Provider.of<MainContainerViewModel>(context,
+                                        listen: false)
+                                    .productCategories[index]
+                                    .id
+                                    .toString());
+
+                        // Fetch product data for the selected category and subcategory
                         Provider.of<ProductPageViewModel>(context,
                                 listen: false)
                             .getProductData(context);
@@ -458,683 +501,726 @@ class _ProductPageState extends State<ProductPage>
               const SizedBox(
                 height: 10.0,
               ),
-              !context.watch<ProductPageViewModel>().isLoading
-                  ? Container()
-                  : Provider.of<ProductPageViewModel>(context, listen: false)
-                          .productList
-                          .isEmpty
-                      ? const Center(
-                          child: Text(
-                            'No Products Present..',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Palette.black,
-                              fontSize: 14.0,
-                              fontFamily: 'EuclidCircularA Medium',
+              // If subcategories are available, show them horizontally below the selected category
+              if (Provider.of<ProductPageViewModel>(context, listen: false)
+                  .subCategories
+                  .isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: SizedBox(
+                    height: 50.0, // Height for subcategories list
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: Provider.of<ProductPageViewModel>(context,
+                              listen: false)
+                          .subCategories
+                          .length,
+                      itemBuilder: (context, index) {
+                        bool isSelected =
+                            Provider.of<ProductPageViewModel>(context)
+                                    .selectedSubCategory ==
+                                Provider.of<ProductPageViewModel>(context,
+                                        listen: false)
+                                    .subCategories[index]
+                                    .name;
+
+                        return GestureDetector(
+                          onTap: () {
+                            // Set selected subcategory and fetch products
+                            Provider.of<ProductPageViewModel>(context,
+                                    listen: false)
+                                .setSelectedSubCategory(
+                                    Provider.of<ProductPageViewModel>(context,
+                                            listen: false)
+                                        .subCategories[index]
+                                        .name);
+                            Provider.of<ProductPageViewModel>(context,
+                                    listen: false)
+                                .getProductData(context);
+                          },
+                          child: Container(
+                            margin: index == 0
+                                ? const EdgeInsets.fromLTRB(
+                                    24.0, 0.0, 20.0, 0.0)
+                                : const EdgeInsets.fromLTRB(
+                                    0.0, 0.0, 20.0, 0.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  Provider.of<ProductPageViewModel>(context,
+                                          listen: false)
+                                      .subCategories[index]
+                                      .name,
+                                  style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontFamily: 'EuclidCircularA Regular',
+                                      fontWeight: FontWeight.bold,
+                                      color: isSelected
+                                          ? Palette.contrastColor
+                                          : Palette.secondaryColor,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: isSelected
+                                          ? Palette.contrastColor
+                                          : Palette.secondaryColor,
+                                      decorationThickness: 1.5),
+                                ),
+                              ],
                             ),
                           ),
-                        )
-                      : LayoutBuilder(
-                          builder: (BuildContext context,
-                              BoxConstraints constraints) {
-                            return GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: constraints.maxWidth < 576
-                                    ? 2
-                                    : constraints.maxWidth < 768
-                                        ? 3
-                                        : constraints.maxWidth < 992
-                                            ? 4
-                                            : 6,
-                                childAspectRatio: constraints.maxWidth < 576
-                                    ? 0.72
-                                    : constraints.maxWidth < 768
-                                        ? 0.8
-                                        : constraints.maxWidth < 992
-                                            ? 0.8
-                                            : constraints.maxWidth < 1024
-                                                ? 0.7
-                                                : constraints.maxWidth < 1220
-                                                    ? 0.7
-                                                    : 0.9,
-                                mainAxisSpacing: 0.0,
-                                crossAxisSpacing: 10.0,
-                              ),
-                              itemCount: Provider.of<ProductPageViewModel>(
-                                      context,
-                                      listen: false)
-                                  .productList
-                                  .length,
-                              itemBuilder: (context, index) {
-                                int counter = 0;
-                                int whislistCounter = 0;
-                                Provider.of<MainContainerViewModel>(context,
-                                        listen: false)
-                                    .cart
-                                    .forEach((element) {
-                                  if (element.item_id ==
-                                          Provider.of<ProductPageViewModel>(
-                                                  context,
-                                                  listen: false)
-                                              .productList[index]
-                                              .id &&
-                                      element.item_category == 'product' &&
-                                      element.cart_category == 'cart') {
-                                    counter++;
-                                  }
-                                });
-                                Provider.of<MainContainerViewModel>(context,
-                                        listen: false)
-                                    .whislist
-                                    .forEach((element) {
-                                  if (element.item_id ==
-                                          Provider.of<ProductPageViewModel>(
-                                                  context,
-                                                  listen: false)
-                                              .productList[index]
-                                              .id &&
-                                      element.item_category == 'product' &&
-                                      element.cart_category == 'whislist') {
-                                    whislistCounter++;
-                                  }
-                                });
-                                return GestureDetector(
-                                  onTap: () {
-                                    print(
-                                        "Product ID: ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].id}");
+                        );
+                      },
+                    ),
+                  ),
+                ),
 
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => EachProduct(
-                                              id: Provider.of<
-                                                          ProductPageViewModel>(
-                                                      context,
-                                                      listen: false)
-                                                  .productList[index]
-                                                  .id)),
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.fromLTRB(
-                                        constraints.maxWidth < 576
-                                            ? index % 2 == 0
+              // !context.watch<ProductPageViewModel>().isLoading
+              //     ? Container()
+              //     : Provider.of<ProductPageViewModel>(context, listen: false)
+              //             .productList
+              //             .isEmpty
+              //         ? const Center(
+              //             child: Text(
+              //               'No Products Present..',
+              //               textAlign: TextAlign.center,
+              //               style: TextStyle(
+              //                 color: Palette.black,
+              //                 fontSize: 14.0,
+              //                 fontFamily: 'EuclidCircularA Medium',
+              //               ),
+              //             ),
+              //           )
+              //         :
+              if (Provider.of<ProductPageViewModel>(context)
+                  .productList
+                  .isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Text(
+                      'No Products Present...',
+                      style: TextStyle(
+                        color: Palette.black,
+                        fontSize: 14.0,
+                        fontFamily: 'EuclidCircularA Medium',
+                      ),
+                    ),
+                  ),
+                )
+              else
+                LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: constraints.maxWidth < 576
+                            ? 2
+                            : constraints.maxWidth < 768
+                                ? 3
+                                : constraints.maxWidth < 992
+                                    ? 4
+                                    : 6,
+                        childAspectRatio: constraints.maxWidth < 576
+                            ? 0.72
+                            : constraints.maxWidth < 768
+                                ? 0.8
+                                : constraints.maxWidth < 992
+                                    ? 0.8
+                                    : constraints.maxWidth < 1024
+                                        ? 0.7
+                                        : constraints.maxWidth < 1220
+                                            ? 0.7
+                                            : 0.9,
+                        mainAxisSpacing: 0.0,
+                        crossAxisSpacing: 10.0,
+                      ),
+                      itemCount: Provider.of<ProductPageViewModel>(context,
+                              listen: false)
+                          .productList
+                          .length,
+                      itemBuilder: (context, index) {
+                        int counter = 0;
+                        int whislistCounter = 0;
+                        Provider.of<MainContainerViewModel>(context,
+                                listen: false)
+                            .cart
+                            .forEach((element) {
+                          if (element.item_id ==
+                                  Provider.of<ProductPageViewModel>(context,
+                                          listen: false)
+                                      .productList[index]
+                                      .id &&
+                              element.item_category == 'product' &&
+                              element.cart_category == 'cart') {
+                            counter++;
+                          }
+                        });
+                        Provider.of<MainContainerViewModel>(context,
+                                listen: false)
+                            .whislist
+                            .forEach((element) {
+                          if (element.item_id ==
+                                  Provider.of<ProductPageViewModel>(context,
+                                          listen: false)
+                                      .productList[index]
+                                      .id &&
+                              element.item_category == 'product' &&
+                              element.cart_category == 'whislist') {
+                            whislistCounter++;
+                          }
+                        });
+                        return GestureDetector(
+                          onTap: () {
+                            print(
+                                "Product ID: ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].id}");
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EachProduct(
+                                      id: Provider.of<ProductPageViewModel>(
+                                              context,
+                                              listen: false)
+                                          .productList[index]
+                                          .id)),
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(
+                                constraints.maxWidth < 576
+                                    ? index % 2 == 0
+                                        ? 24.0
+                                        : 0.0
+                                    : constraints.maxWidth < 768
+                                        ? index % 3 == 0
+                                            ? 24.0
+                                            : 0.0
+                                        : constraints.maxWidth < 992
+                                            ? index % 4 == 0
                                                 ? 24.0
                                                 : 0.0
-                                            : constraints.maxWidth < 768
-                                                ? index % 3 == 0
-                                                    ? 24.0
-                                                    : 0.0
-                                                : constraints.maxWidth < 992
-                                                    ? index % 4 == 0
-                                                        ? 24.0
-                                                        : 0.0
-                                                    : index % 6 == 0
-                                                        ? 24.0
-                                                        : 0.0,
-                                        5.0,
-                                        constraints.maxWidth < 576
-                                            ? index % 2 == 1
+                                            : index % 6 == 0
+                                                ? 24.0
+                                                : 0.0,
+                                5.0,
+                                constraints.maxWidth < 576
+                                    ? index % 2 == 1
+                                        ? 24.0
+                                        : 0.0
+                                    : constraints.maxWidth < 768
+                                        ? index % 3 == 2
+                                            ? 24.0
+                                            : 0.0
+                                        : constraints.maxWidth < 992
+                                            ? index % 4 == 3
                                                 ? 24.0
                                                 : 0.0
-                                            : constraints.maxWidth < 768
-                                                ? index % 3 == 2
-                                                    ? 24.0
-                                                    : 0.0
-                                                : constraints.maxWidth < 992
-                                                    ? index % 4 == 3
-                                                        ? 24.0
-                                                        : 0.0
-                                                    : index % 6 == 5
-                                                        ? 24.0
-                                                        : 0.0,
-                                        5.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      color: Palette.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Palette.shadowColor
-                                              .withOpacity(0.1),
-                                          blurRadius: 5.0, // soften the shadow
-                                          spreadRadius: 0.0, //extend the shadow
-                                          offset: const Offset(
-                                            0.0, // Move to right 10  horizontally
-                                            0.0, // Move to bottom 10 Vertically
+                                            : index % 6 == 5
+                                                ? 24.0
+                                                : 0.0,
+                                5.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: Palette.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Palette.shadowColor.withOpacity(0.1),
+                                  blurRadius: 5.0, // soften the shadow
+                                  spreadRadius: 0.0, //extend the shadow
+                                  offset: const Offset(
+                                    0.0, // Move to right 10  horizontally
+                                    0.0, // Move to bottom 10 Vertically
+                                  ),
+                                ),
+                              ],
+                            ),
+                            child: Stack(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 8,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            print(
+                                                "Product ID: ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].id}");
+
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => EachProduct(
+                                                      id: Provider.of<
+                                                                  ProductPageViewModel>(
+                                                              context,
+                                                              listen: false)
+                                                          .productList[index]
+                                                          .id)),
+                                            );
+                                          },
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                            child: CachedNetworkImage(
+                                              imageUrl: Constants
+                                                      .imgBackendUrl +
+                                                  Provider.of<ProductPageViewModel>(
+                                                          context,
+                                                          listen: false)
+                                                      .productList[index]
+                                                      .image_path,
+                                              placeholder: (context, url) =>
+                                                  const ImagePlaceholder(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const ImagePlaceholder(),
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                            ),
                                           ),
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              flex: 8,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(0.0),
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    print(
-                                                        "Product ID: ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].id}");
-
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) => EachProduct(
-                                                              id: Provider.of<
-                                                                          ProductPageViewModel>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .productList[
-                                                                      index]
-                                                                  .id)),
-                                                    );
-                                                  },
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                    child: CachedNetworkImage(
-                                                      imageUrl: Constants
-                                                              .imgBackendUrl +
+                                    Expanded(
+                                      flex: 8,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Text(
+                                              Provider.of<ProductPageViewModel>(
+                                                              context,
+                                                              listen: false)
+                                                          .productList[index]
+                                                          .name
+                                                          .length >
+                                                      15
+                                                  ? '${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].name.substring(0, 15)}...'
+                                                  : Provider.of<
+                                                              ProductPageViewModel>(
+                                                          context,
+                                                          listen: false)
+                                                      .productList[index]
+                                                      .name,
+                                              textAlign: TextAlign.center,
+                                              maxLines: 1,
+                                              style: const TextStyle(
+                                                color: Palette.black,
+                                                fontSize: 16.0,
+                                                fontFamily:
+                                                    'EuclidCircularA Regular',
+                                              ),
+                                            ),
+                                          ),
+                                          // Padding(
+                                          //   padding:
+                                          //       const EdgeInsets.all(
+                                          //           5.0),
+                                          //   child: Text(
+                                          //     'Rs ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].discount_price}',
+                                          //     style: const TextStyle(
+                                          //       color: Palette
+                                          //           .contrastColor,
+                                          //       fontSize: 16.0,
+                                          //       fontFamily:
+                                          //           'EuclidCircularA Medium',
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Rs ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].discount_price}',
+                                                  style: const TextStyle(
+                                                    color:
+                                                        Palette.contrastColor,
+                                                    fontSize: 16.0,
+                                                    fontFamily:
+                                                        'EuclidCircularA Medium',
+                                                  ),
+                                                ),
+                                                // Text(
+                                                //   Provider.of<ProductPageViewModel>(
+                                                //                   context,
+                                                //                   listen:
+                                                //                       false)
+                                                //               .productList[
+                                                //                   index]
+                                                //               .discount_price ==
+                                                //           Provider.of<ProductPageViewModel>(
+                                                //                   context,
+                                                //                   listen:
+                                                //                       false)
+                                                //               .productList[
+                                                //                   index]
+                                                //               .price
+                                                //       ? ''
+                                                //       : 'Rs ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].price}',
+                                                //   style:
+                                                //       const TextStyle(
+                                                //     color: Palette.grey,
+                                                //     fontSize: 16.0,
+                                                //     fontFamily:
+                                                //         'EuclidCircularA Regular',
+                                                //     decoration:
+                                                //         TextDecoration
+                                                //             .lineThrough,
+                                                //   ),
+                                                // ),
+                                                const SizedBox(
+                                                  width: 10.0,
+                                                ),
+                                                Text(
+                                                  Provider.of<ProductPageViewModel>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .productList[
+                                                                  index]
+                                                              .discount_price ==
                                                           Provider.of<ProductPageViewModel>(
                                                                   context,
                                                                   listen: false)
                                                               .productList[
                                                                   index]
-                                                              .image_path,
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          const ImagePlaceholder(),
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          const ImagePlaceholder(),
-                                                      fit: BoxFit.cover,
-                                                      width: double.infinity,
+                                                              .price
+                                                      ? ''
+                                                      : '${(((int.parse(Provider.of<ProductPageViewModel>(context, listen: false).productList[index].price) - int.parse(Provider.of<ProductPageViewModel>(context, listen: false).productList[index].discount_price)) / int.parse(Provider.of<ProductPageViewModel>(context, listen: false).productList[index].price)) * 100).toString().substring(0, 4)} %',
+                                                  style: const TextStyle(
+                                                    color:
+                                                        Palette.secondaryColor,
+                                                    fontSize: 14.0,
+                                                    fontFamily:
+                                                        'EuclidCircularA Medium',
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => ProductBuyPage(
+                                                        price: Provider.of<
+                                                                    ProductPageViewModel>(
+                                                                context,
+                                                                listen: false)
+                                                            .productList[index]
+                                                            .discount_price,
+                                                        id: Provider.of<
+                                                                    ProductPageViewModel>(
+                                                                context,
+                                                                listen: false)
+                                                            .productList[index]
+                                                            .id)),
+                                              );
+                                              // setState(() {
+                                              //   if (counter >= 1) {
+                                              //     Provider.of<MainContainerViewModel>(
+                                              //             context,
+                                              //             listen: false)
+                                              //         .cart
+                                              //         .removeWhere((element) =>
+                                              //             element.item_id ==
+                                              //                 Provider.of<ProductPageViewModel>(
+                                              //                         context,
+                                              //                         listen:
+                                              //                             false)
+                                              //                     .productList[
+                                              //                         index]
+                                              //                     .id &&
+                                              //             element.item_category ==
+                                              //                 'product' &&
+                                              //             element.cart_category ==
+                                              //                 'cart');
+                                              //     context
+                                              //         .read<
+                                              //             MainContainerViewModel>()
+                                              //         .setCart(Provider.of<
+                                              //                     MainContainerViewModel>(
+                                              //                 context,
+                                              //                 listen:
+                                              //                     false)
+                                              //             .cart);
+                                              //     counter = 0;
+                                              //     Provider.of<ProductPageViewModel>(
+                                              //             context,
+                                              //             listen: false)
+                                              //         .updateCart(
+                                              //             Provider.of<ProductPageViewModel>(
+                                              //                     context,
+                                              //                     listen:
+                                              //                         false)
+                                              //                 .productList[
+                                              //                     index]
+                                              //                 .id,
+                                              //             'remove');
+                                              //   } else {
+                                              //     var newItem =
+                                              //         CartItem(
+                                              //       cart_id: '',
+                                              //       item_id: Provider.of<
+                                              //                   ProductPageViewModel>(
+                                              //               context,
+                                              //               listen:
+                                              //                   false)
+                                              //           .productList[
+                                              //               index]
+                                              //           .id,
+                                              //       name: Provider.of<
+                                              //                   ProductPageViewModel>(
+                                              //               context,
+                                              //               listen:
+                                              //                   false)
+                                              //           .productList[
+                                              //               index]
+                                              //           .name,
+                                              //       price: Provider.of<
+                                              //                   ProductPageViewModel>(
+                                              //               context,
+                                              //               listen:
+                                              //                   false)
+                                              //           .productList[
+                                              //               index]
+                                              //           .discount_price,
+                                              //       cart_category:
+                                              //           'cart',
+                                              //       image_path: Provider.of<
+                                              //                   ProductPageViewModel>(
+                                              //               context,
+                                              //               listen:
+                                              //                   false)
+                                              //           .productList[
+                                              //               index]
+                                              //           .image_path,
+                                              //       quantity: 0,
+                                              //       item_category:
+                                              //           'product',
+                                              //     );
+                                              //     Provider.of<MainContainerViewModel>(
+                                              //             context,
+                                              //             listen: false)
+                                              //         .cart
+                                              //         .add(newItem);
+                                              //     context
+                                              //         .read<
+                                              //             MainContainerViewModel>()
+                                              //         .setCart(Provider.of<
+                                              //                     MainContainerViewModel>(
+                                              //                 context,
+                                              //                 listen:
+                                              //                     false)
+                                              //             .cart);
+                                              //     counter = 1;
+                                              //     Provider.of<ProductPageViewModel>(
+                                              //             context,
+                                              //             listen: false)
+                                              //         .updateCart(
+                                              //             Provider.of<ProductPageViewModel>(
+                                              //                     context,
+                                              //                     listen:
+                                              //                         false)
+                                              //                 .productList[
+                                              //                     index]
+                                              //                 .id,
+                                              //             'add');
+                                              //   }
+                                              // });
+                                            },
+                                            child: Container(
+                                              width: double.infinity,
+                                              decoration: const BoxDecoration(
+                                                color: Palette.secondaryColor2,
+                                                borderRadius: BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(10.0),
+                                                    bottomRight:
+                                                        Radius.circular(10.0)),
+                                              ),
+                                              child: const Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 10.0, bottom: 10.0),
+                                                child: Center(
+                                                  child:
+                                                      // counter >= 1
+                                                      // ? const Text(
+                                                      //     'Remove',
+                                                      //     style:
+                                                      //         TextStyle(
+                                                      //       color: Palette
+                                                      //           .white,
+                                                      //       fontSize:
+                                                      //           14.0,
+                                                      //       fontFamily:
+                                                      //           'EuclidCircularA Medium',
+                                                      //     ),
+                                                      //   )
+                                                      // :
+                                                      Text(
+                                                    'Buy Now',
+                                                    style: TextStyle(
+                                                      color: Palette.white,
+                                                      fontSize: 14.0,
+                                                      fontFamily:
+                                                          'EuclidCircularA Medium',
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                            Expanded(
-                                              flex: 8,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: Text(
-                                                      Provider.of<ProductPageViewModel>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .productList[
-                                                                      index]
-                                                                  .name
-                                                                  .length >
-                                                              15
-                                                          ? '${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].name.substring(0, 15)}...'
-                                                          : Provider.of<
-                                                                      ProductPageViewModel>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .productList[
-                                                                  index]
-                                                              .name,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      maxLines: 1,
-                                                      style: const TextStyle(
-                                                        color: Palette.black,
-                                                        fontSize: 16.0,
-                                                        fontFamily:
-                                                            'EuclidCircularA Regular',
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  // Padding(
-                                                  //   padding:
-                                                  //       const EdgeInsets.all(
-                                                  //           5.0),
-                                                  //   child: Text(
-                                                  //     'Rs ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].discount_price}',
-                                                  //     style: const TextStyle(
-                                                  //       color: Palette
-                                                  //           .contrastColor,
-                                                  //       fontSize: 16.0,
-                                                  //       fontFamily:
-                                                  //           'EuclidCircularA Medium',
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          'Rs ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].discount_price}',
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Palette
-                                                                .contrastColor,
-                                                            fontSize: 16.0,
-                                                            fontFamily:
-                                                                'EuclidCircularA Medium',
-                                                          ),
-                                                        ),
-                                                        // Text(
-                                                        //   Provider.of<ProductPageViewModel>(
-                                                        //                   context,
-                                                        //                   listen:
-                                                        //                       false)
-                                                        //               .productList[
-                                                        //                   index]
-                                                        //               .discount_price ==
-                                                        //           Provider.of<ProductPageViewModel>(
-                                                        //                   context,
-                                                        //                   listen:
-                                                        //                       false)
-                                                        //               .productList[
-                                                        //                   index]
-                                                        //               .price
-                                                        //       ? ''
-                                                        //       : 'Rs ${Provider.of<ProductPageViewModel>(context, listen: false).productList[index].price}',
-                                                        //   style:
-                                                        //       const TextStyle(
-                                                        //     color: Palette.grey,
-                                                        //     fontSize: 16.0,
-                                                        //     fontFamily:
-                                                        //         'EuclidCircularA Regular',
-                                                        //     decoration:
-                                                        //         TextDecoration
-                                                        //             .lineThrough,
-                                                        //   ),
-                                                        // ),
-                                                        const SizedBox(
-                                                          width: 10.0,
-                                                        ),
-                                                        Text(
-                                                          Provider.of<ProductPageViewModel>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .productList[
-                                                                          index]
-                                                                      .discount_price ==
-                                                                  Provider.of<ProductPageViewModel>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .productList[
-                                                                          index]
-                                                                      .price
-                                                              ? ''
-                                                              : '${(((int.parse(Provider.of<ProductPageViewModel>(context, listen: false).productList[index].price) - int.parse(Provider.of<ProductPageViewModel>(context, listen: false).productList[index].discount_price)) / int.parse(Provider.of<ProductPageViewModel>(context, listen: false).productList[index].price)) * 100).toString().substring(0, 4)} %',
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Palette
-                                                                .secondaryColor,
-                                                            fontSize: 14.0,
-                                                            fontFamily:
-                                                                'EuclidCircularA Medium',
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) => ProductBuyPage(
-                                                                price: Provider.of<
-                                                                            ProductPageViewModel>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .productList[
-                                                                        index]
-                                                                    .discount_price,
-                                                                id: Provider.of<
-                                                                            ProductPageViewModel>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .productList[
-                                                                        index]
-                                                                    .id)),
-                                                      );
-                                                      // setState(() {
-                                                      //   if (counter >= 1) {
-                                                      //     Provider.of<MainContainerViewModel>(
-                                                      //             context,
-                                                      //             listen: false)
-                                                      //         .cart
-                                                      //         .removeWhere((element) =>
-                                                      //             element.item_id ==
-                                                      //                 Provider.of<ProductPageViewModel>(
-                                                      //                         context,
-                                                      //                         listen:
-                                                      //                             false)
-                                                      //                     .productList[
-                                                      //                         index]
-                                                      //                     .id &&
-                                                      //             element.item_category ==
-                                                      //                 'product' &&
-                                                      //             element.cart_category ==
-                                                      //                 'cart');
-                                                      //     context
-                                                      //         .read<
-                                                      //             MainContainerViewModel>()
-                                                      //         .setCart(Provider.of<
-                                                      //                     MainContainerViewModel>(
-                                                      //                 context,
-                                                      //                 listen:
-                                                      //                     false)
-                                                      //             .cart);
-                                                      //     counter = 0;
-                                                      //     Provider.of<ProductPageViewModel>(
-                                                      //             context,
-                                                      //             listen: false)
-                                                      //         .updateCart(
-                                                      //             Provider.of<ProductPageViewModel>(
-                                                      //                     context,
-                                                      //                     listen:
-                                                      //                         false)
-                                                      //                 .productList[
-                                                      //                     index]
-                                                      //                 .id,
-                                                      //             'remove');
-                                                      //   } else {
-                                                      //     var newItem =
-                                                      //         CartItem(
-                                                      //       cart_id: '',
-                                                      //       item_id: Provider.of<
-                                                      //                   ProductPageViewModel>(
-                                                      //               context,
-                                                      //               listen:
-                                                      //                   false)
-                                                      //           .productList[
-                                                      //               index]
-                                                      //           .id,
-                                                      //       name: Provider.of<
-                                                      //                   ProductPageViewModel>(
-                                                      //               context,
-                                                      //               listen:
-                                                      //                   false)
-                                                      //           .productList[
-                                                      //               index]
-                                                      //           .name,
-                                                      //       price: Provider.of<
-                                                      //                   ProductPageViewModel>(
-                                                      //               context,
-                                                      //               listen:
-                                                      //                   false)
-                                                      //           .productList[
-                                                      //               index]
-                                                      //           .discount_price,
-                                                      //       cart_category:
-                                                      //           'cart',
-                                                      //       image_path: Provider.of<
-                                                      //                   ProductPageViewModel>(
-                                                      //               context,
-                                                      //               listen:
-                                                      //                   false)
-                                                      //           .productList[
-                                                      //               index]
-                                                      //           .image_path,
-                                                      //       quantity: 0,
-                                                      //       item_category:
-                                                      //           'product',
-                                                      //     );
-                                                      //     Provider.of<MainContainerViewModel>(
-                                                      //             context,
-                                                      //             listen: false)
-                                                      //         .cart
-                                                      //         .add(newItem);
-                                                      //     context
-                                                      //         .read<
-                                                      //             MainContainerViewModel>()
-                                                      //         .setCart(Provider.of<
-                                                      //                     MainContainerViewModel>(
-                                                      //                 context,
-                                                      //                 listen:
-                                                      //                     false)
-                                                      //             .cart);
-                                                      //     counter = 1;
-                                                      //     Provider.of<ProductPageViewModel>(
-                                                      //             context,
-                                                      //             listen: false)
-                                                      //         .updateCart(
-                                                      //             Provider.of<ProductPageViewModel>(
-                                                      //                     context,
-                                                      //                     listen:
-                                                      //                         false)
-                                                      //                 .productList[
-                                                      //                     index]
-                                                      //                 .id,
-                                                      //             'add');
-                                                      //   }
-                                                      // });
-                                                    },
-                                                    child: Container(
-                                                      width: double.infinity,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        color: Palette
-                                                            .secondaryColor2,
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        10.0),
-                                                                bottomRight: Radius
-                                                                    .circular(
-                                                                        10.0)),
-                                                      ),
-                                                      child: const Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 10.0,
-                                                                bottom: 10.0),
-                                                        child: Center(
-                                                          child:
-                                                              // counter >= 1
-                                                              // ? const Text(
-                                                              //     'Remove',
-                                                              //     style:
-                                                              //         TextStyle(
-                                                              //       color: Palette
-                                                              //           .white,
-                                                              //       fontSize:
-                                                              //           14.0,
-                                                              //       fontFamily:
-                                                              //           'EuclidCircularA Medium',
-                                                              //     ),
-                                                              //   )
-                                                              // :
-                                                              Text(
-                                                            'Buy Now',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Palette.white,
-                                                              fontSize: 14.0,
-                                                              fontFamily:
-                                                                  'EuclidCircularA Medium',
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Positioned(
-                                          top: 10,
-                                          right: 10,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              Utility.printLog(
-                                                  'whislist pressed');
-                                              setState(() {
-                                                if (whislistCounter >= 1) {
-                                                  Provider.of<MainContainerViewModel>(
-                                                          context,
-                                                          listen: false)
-                                                      .whislist
-                                                      .removeWhere((element) =>
-                                                          element.item_id ==
-                                                              Provider.of<ProductPageViewModel>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .productList[
-                                                                      index]
-                                                                  .id &&
-                                                          element.item_category ==
-                                                              'product' &&
-                                                          element.cart_category ==
-                                                              'whislist');
-                                                  context
-                                                      .read<
-                                                          MainContainerViewModel>()
-                                                      .setWhislist(Provider.of<
-                                                                  MainContainerViewModel>(
-                                                              context,
-                                                              listen: false)
-                                                          .whislist);
-                                                  whislistCounter = 0;
-                                                  updateWhislist(
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Positioned(
+                                  top: 10,
+                                  right: 10,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Utility.printLog('whislist pressed');
+                                      setState(() {
+                                        if (whislistCounter >= 1) {
+                                          Provider.of<MainContainerViewModel>(
+                                                  context,
+                                                  listen: false)
+                                              .whislist
+                                              .removeWhere((element) =>
+                                                  element.item_id ==
                                                       Provider.of<ProductPageViewModel>(
                                                               context,
                                                               listen: false)
                                                           .productList[index]
-                                                          .id,
-                                                      'remove');
-                                                } else {
-                                                  var newItem = CartItem(
-                                                    cart_id: '',
-                                                    item_id: Provider.of<
-                                                                ProductPageViewModel>(
-                                                            context,
-                                                            listen: false)
-                                                        .productList[index]
-                                                        .id,
-                                                    name: Provider.of<
-                                                                ProductPageViewModel>(
-                                                            context,
-                                                            listen: false)
-                                                        .productList[index]
-                                                        .name,
-                                                    price: int.parse(Provider
-                                                            .of<ProductPageViewModel>(
-                                                                context,
-                                                                listen: false)
-                                                        .productList[index]
-                                                        .discount_price),
-                                                    cart_category: 'whislist',
-                                                    image_path: Provider.of<
-                                                                ProductPageViewModel>(
-                                                            context,
-                                                            listen: false)
-                                                        .productList[index]
-                                                        .image_path,
-                                                    quantity: 0,
-                                                    item_category: 'product',
-                                                  );
-                                                  Provider.of<MainContainerViewModel>(
-                                                          context,
-                                                          listen: false)
-                                                      .whislist
-                                                      .add(newItem);
-                                                  context
-                                                      .read<
-                                                          MainContainerViewModel>()
-                                                      .setWhislist(Provider.of<
-                                                                  MainContainerViewModel>(
-                                                              context,
-                                                              listen: false)
-                                                          .whislist);
-                                                  whislistCounter = 1;
-                                                  updateWhislist(
-                                                      Provider.of<ProductPageViewModel>(
-                                                              context,
-                                                              listen: false)
-                                                          .productList[index]
-                                                          .id,
-                                                      'add');
-                                                }
-                                              });
-                                            },
-                                            child: Container(
-                                              height: 30.0,
-                                              width: 30.0,
-                                              decoration: BoxDecoration(
-                                                color: Palette.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Palette.shadowColor
-                                                        .withOpacity(0.1),
-                                                    blurRadius:
-                                                        5.0, // soften the shadow
-                                                    spreadRadius:
-                                                        0.0, //extend the shadow
-                                                    offset: const Offset(
-                                                      0.0, // Move to right 10  horizontally
-                                                      0.0, // Move to bottom 10 Vertically
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Icon(
-                                                whislistCounter >= 1
-                                                    ? MdiIcons.heart
-                                                    : MdiIcons.heartOutline,
-                                                size: 20.0,
-                                                color: Palette.contrastColor,
-                                              ),
+                                                          .id &&
+                                                  element.item_category ==
+                                                      'product' &&
+                                                  element.cart_category ==
+                                                      'whislist');
+                                          context
+                                              .read<MainContainerViewModel>()
+                                              .setWhislist(Provider.of<
+                                                          MainContainerViewModel>(
+                                                      context,
+                                                      listen: false)
+                                                  .whislist);
+                                          whislistCounter = 0;
+                                          updateWhislist(
+                                              Provider.of<ProductPageViewModel>(
+                                                      context,
+                                                      listen: false)
+                                                  .productList[index]
+                                                  .id,
+                                              'remove');
+                                        } else {
+                                          var newItem = CartItem(
+                                            cart_id: '',
+                                            item_id: Provider.of<
+                                                        ProductPageViewModel>(
+                                                    context,
+                                                    listen: false)
+                                                .productList[index]
+                                                .id,
+                                            name: Provider.of<
+                                                        ProductPageViewModel>(
+                                                    context,
+                                                    listen: false)
+                                                .productList[index]
+                                                .name,
+                                            price: int.parse(Provider.of<
+                                                        ProductPageViewModel>(
+                                                    context,
+                                                    listen: false)
+                                                .productList[index]
+                                                .discount_price),
+                                            cart_category: 'whislist',
+                                            image_path: Provider.of<
+                                                        ProductPageViewModel>(
+                                                    context,
+                                                    listen: false)
+                                                .productList[index]
+                                                .image_path,
+                                            quantity: 0,
+                                            item_category: 'product',
+                                          );
+                                          Provider.of<MainContainerViewModel>(
+                                                  context,
+                                                  listen: false)
+                                              .whislist
+                                              .add(newItem);
+                                          context
+                                              .read<MainContainerViewModel>()
+                                              .setWhislist(Provider.of<
+                                                          MainContainerViewModel>(
+                                                      context,
+                                                      listen: false)
+                                                  .whislist);
+                                          whislistCounter = 1;
+                                          updateWhislist(
+                                              Provider.of<ProductPageViewModel>(
+                                                      context,
+                                                      listen: false)
+                                                  .productList[index]
+                                                  .id,
+                                              'add');
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      height: 30.0,
+                                      width: 30.0,
+                                      decoration: BoxDecoration(
+                                        color: Palette.white,
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Palette.shadowColor
+                                                .withOpacity(0.1),
+                                            blurRadius:
+                                                5.0, // soften the shadow
+                                            spreadRadius:
+                                                0.0, //extend the shadow
+                                            offset: const Offset(
+                                              0.0, // Move to right 10  horizontally
+                                              0.0, // Move to bottom 10 Vertically
                                             ),
                                           ),
-                                        )
-                                      ],
+                                        ],
+                                      ),
+                                      child: Icon(
+                                        whislistCounter >= 1
+                                            ? MdiIcons.heart
+                                            : MdiIcons.heartOutline,
+                                        size: 20.0,
+                                        color: Palette.contrastColor,
+                                      ),
                                     ),
                                   ),
-                                );
-                              },
-                            );
-                          },
-                        ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               !context.watch<ProductPageViewModel>().isLoading
                   ? Container()
                   : Container(

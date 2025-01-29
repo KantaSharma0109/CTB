@@ -461,115 +461,115 @@ class _EachCourseState extends State<EachCourse>
     }
   }
 
-  // Future<void> getCourse() async {
-  //   Utility.showProgress(true);
-  //   String url =
-  //       '${Constants.finalUrl}/courses_api/getEachCourse?language_id=${Application.languageId}&course_id=${widget.id}&user_id=${Application.userId}';
-  //   Map<String, dynamic> _getResult =
-  //       await ApiFunctions.getApiResult(url, Application.deviceToken);
-  //   print(url);
-  //   bool _status = _getResult['status'];
-  //   print(_getResult);
-  //   var _data = _getResult['data'];
-  //   if (_status) {
-  //     if (_data['message'] == 'no_subscription_available' ||
-  //         _data['message'] == 'subscription_available') {
-  //       courseData = Course.fromJson(_data[ApiKeys.course][0]);
-  //       shareText = _data[ApiKeys.shareText].toString();
-  //       subscribedDays = _data[ApiKeys.subscribedDays];
-  //       isSubscribed = _data[ApiKeys.issubscribed];
-  //       isShowPopup = _data[ApiKeys.show_popup];
-  //       videosList.clear();
-  //       pdfList.clear();
-  //       _data[ApiKeys.videos].forEach((video) {
-  //         videosList.add(Videos.fromJson(video));
-  //       });
-  //       _data[ApiKeys.pdf].forEach((pdf) {
-  //         pdfList.add(Pdf.fromJson(pdf));
-  //       });
-  //       if (isShowPopup) {
-  //         Utility.subscriptionEndedPopup(context);
-  //         getCourse();
-  //       }
-  //     } else if (_data['message'] == 'Auth_token_failure') {
-  //       Utility.authErrorPopup(
-  //           context,
-  //           'Sorry for inconvenience. Their is some authentication problem regarding your account contact support: ' +
-  //               Application.adminPhoneNumber);
-  //     } else {
-  //       Utility.showSnacbar(context, 'Some error occurred!!');
-  //     }
-  //     setState(() {
-  //       isLoading = true;
-  //     });
-  //     Utility.showProgress(false);
-  //   } else {
-  //     Utility.printLog('Something went wrong.');
-  //     Utility.showProgress(false);
-  //   }
-  // }
-
   Future<void> getCourse() async {
-    Utility.showProgress(true); // Show loading indicator
+    Utility.showProgress(true);
     String url =
-        '${Constants.baseUrl}each_course.php?course_id=${widget.id}&user_id=${Application.userId}';
-    Map<String, String> headers = {
-      'Token': Application.deviceToken,
-    };
-
-    print('Request URL: $url');
-    print('Request Headers: $headers');
-
-    try {
-      // Perform the HTTP GET request
-      final response = await http.get(Uri.parse(url), headers: headers);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> result = json.decode(response.body);
-        print('Parsed Response: $result');
-
-        if (result['message'] == 'no_subscription_available' ||
-            result['message'] == 'subscription_available') {
-          courseData = Course.fromJson(result['course']);
-          shareText = result['shareText'].toString();
-          subscribedDays = result['subscribeddays'];
-          isSubscribed = result['issubscribed'];
-          isShowPopup = result['show_popup'];
-          videosList.clear();
-          pdfList.clear();
-
-          (result['videos'] as List).forEach((video) {
-            videosList.add(Videos.fromJson(video));
-          });
-          (result['pdf'] as List).forEach((pdf) {
-            pdfList.add(Pdf.fromJson(pdf));
-          });
-
-          if (isShowPopup) {
-            Utility.subscriptionEndedPopup(context);
-            getCourse();
-          }
-        } else if (result['message'] == 'Auth_token_failure') {
-          Utility.authErrorPopup(context,
-              'Authentication failed. Contact support: ${Application.adminPhoneNumber}');
-        } else {
-          Utility.showSnacbar(context, 'Some error occurred!');
-        }
-
-        setState(() {
-          isLoading = true;
+        '${Constants.finalUrl}/courses_api/getEachCourse?language_id=${Application.languageId}&course_id=${widget.id}&user_id=${Application.userId}';
+    Map<String, dynamic> _getResult =
+        await ApiFunctions.getApiResult(url, Application.deviceToken);
+    print(url);
+    bool _status = _getResult['status'];
+    print(_getResult);
+    var _data = _getResult['data'];
+    if (_status) {
+      if (_data['message'] == 'no_subscription_available' ||
+          _data['message'] == 'subscription_available') {
+        courseData = Course.fromJson(_data[ApiKeys.course][0]);
+        shareText = _data[ApiKeys.shareText].toString();
+        subscribedDays = _data[ApiKeys.subscribedDays];
+        isSubscribed = _data[ApiKeys.issubscribed];
+        isShowPopup = _data[ApiKeys.show_popup];
+        videosList.clear();
+        pdfList.clear();
+        _data[ApiKeys.videos].forEach((video) {
+          videosList.add(Videos.fromJson(video));
         });
+        _data[ApiKeys.pdf].forEach((pdf) {
+          pdfList.add(Pdf.fromJson(pdf));
+        });
+        if (isShowPopup) {
+          Utility.subscriptionEndedPopup(context);
+          getCourse();
+        }
+      } else if (_data['message'] == 'Auth_token_failure') {
+        Utility.authErrorPopup(
+            context,
+            'Sorry for inconvenience. Their is some authentication problem regarding your account contact support: ' +
+                Application.adminPhoneNumber);
       } else {
-        Utility.showSnacbar(context, 'Server error: ${response.statusCode}');
+        Utility.showSnacbar(context, 'Some error occurred!!');
       }
-    } catch (e) {
-      Utility.showSnacbar(context, 'Error fetching data: $e');
-    } finally {
-      Utility.showProgress(false); // Hide loading indicator
+      setState(() {
+        isLoading = true;
+      });
+      Utility.showProgress(false);
+    } else {
+      Utility.printLog('Something went wrong.');
+      Utility.showProgress(false);
     }
   }
+
+  // Future<void> getCourse() async {
+  //   Utility.showProgress(true); // Show loading indicator
+  //   String url =
+  //       '${Constants.baseUrl}each_course.php?course_id=${widget.id}&user_id=${Application.userId}';
+  //   Map<String, String> headers = {
+  //     'Token': Application.deviceToken,
+  //   };
+
+  //   print('Request URL: $url');
+  //   print('Request Headers: $headers');
+
+  //   try {
+  //     // Perform the HTTP GET request
+  //     final response = await http.get(Uri.parse(url), headers: headers);
+  //     print('Response status: ${response.statusCode}');
+  //     print('Response body: ${response.body}');
+
+  //     if (response.statusCode == 200) {
+  //       final Map<String, dynamic> result = json.decode(response.body);
+  //       print('Parsed Response: $result');
+
+  //       if (result['message'] == 'no_subscription_available' ||
+  //           result['message'] == 'subscription_available') {
+  //         courseData = Course.fromJson(result['course']);
+  //         shareText = result['shareText'].toString();
+  //         subscribedDays = result['subscribeddays'];
+  //         isSubscribed = result['issubscribed'];
+  //         isShowPopup = result['show_popup'];
+  //         videosList.clear();
+  //         pdfList.clear();
+
+  //         (result['videos'] as List).forEach((video) {
+  //           videosList.add(Videos.fromJson(video));
+  //         });
+  //         (result['pdf'] as List).forEach((pdf) {
+  //           pdfList.add(Pdf.fromJson(pdf));
+  //         });
+
+  //         if (isShowPopup) {
+  //           Utility.subscriptionEndedPopup(context);
+  //           getCourse();
+  //         }
+  //       } else if (result['message'] == 'Auth_token_failure') {
+  //         Utility.authErrorPopup(context,
+  //             'Authentication failed. Contact support: ${Application.adminPhoneNumber}');
+  //       } else {
+  //         Utility.showSnacbar(context, 'Some error occurred!');
+  //       }
+
+  //       setState(() {
+  //         isLoading = true;
+  //       });
+  //     } else {
+  //       Utility.showSnacbar(context, 'Server error: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     Utility.showSnacbar(context, 'Error fetching data: $e');
+  //   } finally {
+  //     Utility.showProgress(false); // Hide loading indicator
+  //   }
+  // }
 
   _filterRetriever() async {
     try {
