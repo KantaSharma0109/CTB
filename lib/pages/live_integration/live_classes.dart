@@ -10,7 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // import 'package:ios_insecure_screen_detector/ios_insecure_screen_detector.dart';
 import 'package:provider/provider.dart';
-// import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../api/api_functions.dart';
@@ -43,7 +43,7 @@ class _LiveClassesState extends State<LiveClasses> {
   //     IosInsecureScreenDetector();
   bool _isCaptured = false;
   Map<String, dynamic>? paymentParameter = {};
-  // late Razorpay _razorpay;
+  late Razorpay _razorpay;
   String liveId = '';
 
   Future<void> getLive() async {
@@ -181,10 +181,10 @@ class _LiveClassesState extends State<LiveClasses> {
 
   @override
   void initState() {
-    // _razorpay = Razorpay();
-    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     // if (Platform.isIOS) {
     //   _insecureScreenDetector.initialize();
     //   _insecureScreenDetector.addListener(() {
@@ -211,7 +211,7 @@ class _LiveClassesState extends State<LiveClasses> {
 
   @override
   void dispose() {
-    // _razorpay.clear();
+    _razorpay.clear();
     super.dispose();
   }
 
@@ -710,7 +710,7 @@ class _LiveClassesState extends State<LiveClasses> {
     if (status) {
       Utility.showProgress(false);
       try {
-        // _razorpay.open(data!);
+        _razorpay.open(data!);
       } catch (e) {
         Utility.printLog("Payment Payment error $e");
       }
@@ -722,103 +722,103 @@ class _LiveClassesState extends State<LiveClasses> {
     }
   }
 
-  // void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-  //   Utility.printLog("Payment Checkout Success ${response.paymentId}");
-  //   // _razorpay.clear();
-  //   Utility.showProgress(true);
-  //   Map<String, String> params = {};
-  //   String url =
-  //       '${Constants.finalUrl}/complete_payment_live_mobile/${Application.userId}/$liveId';
-  //   Map<String, dynamic> paymentSuccess =
-  //       await ApiFunctions.postApiResult(url, Application.deviceToken, params);
-  //   bool status = paymentSuccess['status'];
-  //   var data = paymentSuccess['data'];
-  //   if (status) {
-  //     // print(data);
-  //     if (data[ApiKeys.message].toString() == 'payment_success') {
-  //       Utility.showProgress(false);
-  //       Provider.of<MainContainerViewModel>(context, listen: false)
-  //           .setNotificationCount();
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => const LiveClasses(),
-  //         ),
-  //       );
-  //       Utility.showSnacbar(
-  //         context,
-  //         'Your purchase of live class is successful!!, please click here to check',
-  //         onClicked: () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(builder: (context) => const NotificationPage()),
-  //           );
-  //         },
-  //         duration: 2,
-  //       );
-  //     } else if (data[ApiKeys.message].toString() == 'payment_failed' ||
-  //         data[ApiKeys.message].toString() == 'Database_connection_error') {
-  //       Utility.showProgress(false);
-  //       Utility.showSnacbar(context, 'Payment Failed!!');
-  //     }
-  //   } else {
-  //     Utility.printLog('Something went wrong while saving token.');
-  //     Utility.printLog('Some error occurred');
-  //     Utility.showProgress(false);
-  //     Utility.showSnacbar(context, 'Some error occurred!!');
-  //   }
-  // }
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    Utility.printLog("Payment Checkout Success ${response.paymentId}");
+    // _razorpay.clear();
+    Utility.showProgress(true);
+    Map<String, String> params = {};
+    String url =
+        '${Constants.finalUrl}/complete_payment_live_mobile/${Application.userId}/$liveId';
+    Map<String, dynamic> paymentSuccess =
+        await ApiFunctions.postApiResult(url, Application.deviceToken, params);
+    bool status = paymentSuccess['status'];
+    var data = paymentSuccess['data'];
+    if (status) {
+      // print(data);
+      if (data[ApiKeys.message].toString() == 'payment_success') {
+        Utility.showProgress(false);
+        Provider.of<MainContainerViewModel>(context, listen: false)
+            .setNotificationCount();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LiveClasses(),
+          ),
+        );
+        Utility.showSnacbar(
+          context,
+          'Your purchase of live class is successful!!, please click here to check',
+          onClicked: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NotificationPage()),
+            );
+          },
+          duration: 2,
+        );
+      } else if (data[ApiKeys.message].toString() == 'payment_failed' ||
+          data[ApiKeys.message].toString() == 'Database_connection_error') {
+        Utility.showProgress(false);
+        Utility.showSnacbar(context, 'Payment Failed!!');
+      }
+    } else {
+      Utility.printLog('Something went wrong while saving token.');
+      Utility.printLog('Some error occurred');
+      Utility.showProgress(false);
+      Utility.showSnacbar(context, 'Some error occurred!!');
+    }
+  }
 
-  // void _handlePaymentError(PaymentFailureResponse response) {
-  //   Utility.printLog(
-  //       "Payment Checkout Failure ${response.code} ${response.message}");
-  //   // _razorpay.clear();
-  //   Utility.showSnacbar(context, 'Payment Failed!!');
-  // }
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Utility.printLog(
+        "Payment Checkout Failure ${response.code} ${response.message}");
+    // _razorpay.clear();
+    Utility.showSnacbar(context, 'Payment Failed!!');
+  }
 
-  // void _handleExternalWallet(ExternalWalletResponse response) async {
-  //   Utility.printLog("Payment Checkout Wallet ${response.walletName}");
-  //   // _razorpay.clear();
-  //   Utility.showProgress(true);
-  //   Map<String, String> params = {};
-  //   String url =
-  //       '${Constants.finalUrl}/complete_payment_live_mobile/${Application.userId}/$liveId';
-  //   Map<String, dynamic> paymentSuccess =
-  //       await ApiFunctions.postApiResult(url, Application.deviceToken, params);
-  //   bool status = paymentSuccess['status'];
-  //   var data = paymentSuccess['data'];
-  //   if (status) {
-  //     if (data[ApiKeys.message].toString() == 'payment_success') {
-  //       Utility.showProgress(false);
-  //       Provider.of<MainContainerViewModel>(context, listen: false)
-  //           .setNotificationCount();
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => const LiveClasses(),
-  //         ),
-  //       );
-  //       Utility.showSnacbar(
-  //         context,
-  //         'Your purchase of live class is successful!!, please click here to check',
-  //         onClicked: () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(builder: (context) => const NotificationPage()),
-  //           );
-  //         },
-  //         duration: 2,
-  //       );
-  //     } else if (data[ApiKeys.message].toString() == 'payment_failed' ||
-  //         data[ApiKeys.message].toString() == 'Database_connection_error') {
-  //       Utility.showProgress(false);
-  //       Utility.showSnacbar(context, 'Payment Failed!!');
-  //     }
-  //   } else {
-  //     Utility.printLog('Something went wrong while saving token.');
-  //     Utility.printLog('Some error occurred');
-  //     Utility.showProgress(false);
-  //     Utility.showSnacbar(context, 'Some error occurred!!');
-  //   }
-  // }
+  void _handleExternalWallet(ExternalWalletResponse response) async {
+    Utility.printLog("Payment Checkout Wallet ${response.walletName}");
+    // _razorpay.clear();
+    Utility.showProgress(true);
+    Map<String, String> params = {};
+    String url =
+        '${Constants.finalUrl}/complete_payment_live_mobile/${Application.userId}/$liveId';
+    Map<String, dynamic> paymentSuccess =
+        await ApiFunctions.postApiResult(url, Application.deviceToken, params);
+    bool status = paymentSuccess['status'];
+    var data = paymentSuccess['data'];
+    if (status) {
+      if (data[ApiKeys.message].toString() == 'payment_success') {
+        Utility.showProgress(false);
+        Provider.of<MainContainerViewModel>(context, listen: false)
+            .setNotificationCount();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LiveClasses(),
+          ),
+        );
+        Utility.showSnacbar(
+          context,
+          'Your purchase of live class is successful!!, please click here to check',
+          onClicked: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NotificationPage()),
+            );
+          },
+          duration: 2,
+        );
+      } else if (data[ApiKeys.message].toString() == 'payment_failed' ||
+          data[ApiKeys.message].toString() == 'Database_connection_error') {
+        Utility.showProgress(false);
+        Utility.showSnacbar(context, 'Payment Failed!!');
+      }
+    } else {
+      Utility.printLog('Something went wrong while saving token.');
+      Utility.printLog('Some error occurred');
+      Utility.showProgress(false);
+      Utility.showSnacbar(context, 'Some error occurred!!');
+    }
+  }
 }

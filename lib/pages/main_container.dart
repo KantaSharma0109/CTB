@@ -123,7 +123,56 @@ class _MainContainerState extends State<MainContainer> {
     }
   }
 
-  Future<void> fetchData() async {
+  // Future<void> fetchData() async {
+  //   // Provider.of<MainContainerViewModel>(context, listen: false)
+  //   //     .initializeFlutterFire(context);
+  //   // if (Provider.of<MainContainerViewModel>(context, listen: false).isLoading) {
+  //   // await Future.delayed(const Duration(milliseconds: 1000));
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+
+  //   try {
+  //     final result = await InternetAddress.lookup(Constants.internetCheckUrl);
+  //     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+  //       Utility.printLog('connected');
+  //       if (Provider.of<MainContainerViewModel>(context, listen: false)
+  //           .courseCategories
+  //           .isNotEmpty) {
+  //         Provider.of<CoursePageViewModel>(context, listen: false)
+  //             .setSelectedCategory(
+  //                 Provider.of<MainContainerViewModel>(context, listen: false)
+  //                     .courseCategories[0]
+  //                     .name);
+  //       }
+  //       if (Provider.of<MainContainerViewModel>(context, listen: false)
+  //           .productCategories
+  //           .isNotEmpty) {
+  //         Provider.of<ProductPageViewModel>(context, listen: false)
+  //             .setSelectedCategory(
+  //                 Provider.of<MainContainerViewModel>(context, listen: false)
+  //                     .productCategories[0]
+  //                     .name);
+  //       }
+  //       Utility.showProgress(false);
+  //       setState(() {
+  //         isLoading = true;
+  //       });
+  //       extraData();
+  //     }
+  //   } on SocketException catch (_) {
+  //     Utility.printLog('not connected');
+  //     Utility.noInternetPopup(context);
+  //     Utility.showProgress(false);
+  //     setState(() {
+  //       isLoading = true;
+  //     });
+  //   }
+  //   // }
+  //   // await Future.delayed(const Duration(milliseconds: 3000));
+  // }
+
+  Future<void> getAppData() async {
     // Provider.of<MainContainerViewModel>(context, listen: false)
     //     .initializeFlutterFire(context);
     // if (Provider.of<MainContainerViewModel>(context, listen: false).isLoading) {
@@ -195,7 +244,8 @@ class _MainContainerState extends State<MainContainer> {
     }
 
     Utility.showProgress(true);
-    fetchData();
+    // fetchData();
+    getAppData();
   }
 
   // //Sharing Function

@@ -226,11 +226,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  // Future<void> getAppData() async {
-  //   // Wait for the data to be fetched before proceeding
-  //   await Provider.of<MainContainerViewModel>(context, listen: false)
-  //       .getAppData(context);
-  // }
+  Future<void> getAppData() async {
+    // Wait for the data to be fetched before proceeding
+    await Provider.of<MainContainerViewModel>(context, listen: false)
+        .getAppData(context);
+  }
+
   Future<void> fetchData(BuildContext context) async {
     // Wait for the data to be fetched before navigating
     await Provider.of<MainContainerViewModel>(context, listen: false)
@@ -243,6 +244,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     initializeFlutterFire(context);
+    getAppData();
     fetchData(context);
   }
 
@@ -267,7 +269,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         scaffoldBackgroundColor: Palette.scaffoldColor,
       ),
-      // home: const SplashScreen(),
+      home: const SplashScreen(),
       // home: StreamBuilder(
       //     stream: FirebaseAuth.instance.authStateChanges(),
       //     builder: (context, AsyncSnapshot<User?> user) {
@@ -278,29 +280,30 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       //         return SplashScreen();
       //       }
       //     }),
-      home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, AsyncSnapshot<User?> user) {
-            EasyLoading.init();
-            if (user.hasData) {
-              fetchData(context);
-              return MainContainer();
-            } else {
-              return FutureBuilder<bool>(
-                future: _checkLoginStatus(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  }
-                  if (snapshot.data == true) {
-                    return MainContainer();
-                  } else {
-                    return SplashScreen();
-                  }
-                },
-              );
-            }
-          }),
+      // home: StreamBuilder(
+      //     stream: FirebaseAuth.instance.authStateChanges(),
+      //     builder: (context, AsyncSnapshot<User?> user) {
+      //       EasyLoading.init();
+      //       if (user.hasData) {
+      //         getAppData();
+      //         fetchData(context);
+      //         return MainContainer();
+      //       } else {
+      //         return FutureBuilder<bool>(
+      //           future: _checkLoginStatus(),
+      //           builder: (context, snapshot) {
+      //             if (snapshot.connectionState == ConnectionState.waiting) {
+      //               return CircularProgressIndicator();
+      //             }
+      //             if (snapshot.data == true) {
+      //               return MainContainer();
+      //             } else {
+      //               return SplashScreen();
+      //             }
+      //           },
+      //         );
+      //       }
+      //     }),
     );
     //   return !isTokenLoaded
     //       ? const MaterialApp(

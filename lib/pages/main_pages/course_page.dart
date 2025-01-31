@@ -558,7 +558,7 @@ class _CoursePageState extends State<CoursePage> {
                                             ? 4
                                             : 6,
                                 childAspectRatio: constraints.maxWidth < 576
-                                    ? 1.6
+                                    ? 1.5
                                     : constraints.maxWidth < 768
                                         ? 0.8
                                         : constraints.maxWidth < 992

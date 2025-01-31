@@ -321,113 +321,116 @@ class MainContainerViewModel with ChangeNotifier {
 
   //Get App Data Function
   Future<void> getAppData(BuildContext context) async {
-    //   final PackageInfo info = await PackageInfo.fromPlatform();
-    //   SharedPreferences prefs = await SharedPreferences.getInstance();
-    //   // String savedPhoneNumber = prefs.getString('phonenumber') ?? '';
-    //   String savedPhoneNumber = prefs.getString('phonenumber') ?? '';
-    //   String savedName = prefs.getString('name') ?? '';
-    //   String savedLanguageId = prefs.getString('language_id') ?? '';
-    //   String savedDate = prefs.getString('date') ?? '';
-    //   String savedAddress = prefs.getString('address') ?? '';
-    //   String savedPincode = prefs.getString('pincode') ?? '311001';
-    //   Utility.printLog('saved language Id = $savedLanguageId');
-    //   Utility.printLog('saved Phone Number = $savedPhoneNumber');
-    //   Application.phoneNumber = savedPhoneNumber;
-    //   Application.pincode = savedPincode;
-    //   if (savedLanguageId.isEmpty) {
-    //     prefs.setString("language_id", '1');
-    //     Application.languageId = '1';
-    //   } else {
-    //     Application.languageId = savedLanguageId;
-    //   }
-    //   if (savedDate.isEmpty) {
-    //     prefs.setString("date", DateTime.now().toString());
-    //   }
-    //   Utility.printLog(
-    //       'SAVED FCM token in main view model ${Application.deviceToken}');
-    // // String url =
-    // //     '${Constants.finalUrl}/api/app_data?language_id=${Application.languageId}';
+    final PackageInfo info = await PackageInfo.fromPlatform();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String savedPhoneNumber = prefs.getString('phonenumber') ?? '';
+    String savedPhoneNumber = prefs.getString('mobileNumber') ?? '';
+    String savedName = prefs.getString('name') ?? '';
+    String savedLanguageId = prefs.getString('language_id') ?? '';
+    String savedDate = prefs.getString('date') ?? '';
+    String savedAddress = prefs.getString('address') ?? '';
+    String savedPincode = prefs.getString('pincode') ?? '311001';
+    Utility.printLog('saved language Id = $savedLanguageId');
+    Utility.printLog('saved Phone Number = $savedPhoneNumber');
+    Application.phoneNumber = savedPhoneNumber;
+    Application.pincode = savedPincode;
+    if (savedLanguageId.isEmpty) {
+      prefs.setString("language_id", '1');
+      Application.languageId = '1';
+    } else {
+      Application.languageId = savedLanguageId;
+    }
+    if (savedDate.isEmpty) {
+      prefs.setString("date", DateTime.now().toString());
+    }
+    Utility.printLog(
+        'SAVED FCM token in main view model ${Application.deviceToken}');
+    String url =
+        '${Constants.finalUrl}/api/app_data?language_id=${Application.languageId}';
     // String url = '${Constants.baseUrl}api.php';
-    // Map<String, dynamic> _getResult = await ApiFunctions.getApiResult(
-    //     url, Application.deviceToken,
-    //     version: info.version);
-    // bool _status = _getResult['status'];
-    // var _data = _getResult['data'];
-    // // print(_data);
-    // if (_status) {
-    //   if (_data[ApiKeys.message] == 'User_Authenticated_successfully' ||
-    //       _data["message"] == 'User_created_successfully') {
-    //     Application.isShowPopup = _data[ApiKeys.show_popup];
-    //     Application.adminPhoneNumber = _data[ApiKeys.phoneNumber].toString();
-    //     Application.shareText = _data['share_text'];
-    //     if (savedAddress.isNotEmpty) {
-    //       Application.address = savedAddress;
-    //     } else {
-    //       prefs.setString(
-    //           "address",
-    //           _data[ApiKeys.user][0][ApiKeys.address].toString() != 'null'
-    //               ? _data[ApiKeys.user][0][ApiKeys.address].toString()
-    //               : '');
-    //       Application.address =
-    //           _data[ApiKeys.user][0][ApiKeys.address].toString() != 'null'
-    //               ? _data[ApiKeys.user][0][ApiKeys.address].toString()
-    //               : '';
-    //     }
-    //     if (savedName.isNotEmpty) {
-    //       Application.userName = savedName;
-    //     } else {
-    //       prefs.setString(
-    //           "name",
-    //           _data[ApiKeys.user][0][ApiKeys.name].toString() != 'null'
-    //               ? _data[ApiKeys.user][0][ApiKeys.name].toString()
-    //               : '');
-    //       Application.userName =
-    //           _data[ApiKeys.user][0][ApiKeys.name].toString() != 'null'
-    //               ? _data[ApiKeys.user][0][ApiKeys.name].toString()
-    //               : '';
-    //     }
-    //     if (savedPhoneNumber.isNotEmpty) {
-    //       if (_data[ApiKeys.user][0][ApiKeys.phone_number].toString() !=
-    //           savedPhoneNumber) {
-    //         _isLoading = true;
-    //         notifyListeners();
-    //         Utility.logoutUser(context);
-    //         Application.isShowLogoutPopup = true;
-    //         setAppData(_data, context);
-    //       } else {
-    //         setAppData(_data, context);
-    //       }
-    //     } else {
-    //       setAppData(_data, context);
-    //     }
-    //   } else if (_data[ApiKeys.message] == 'Auth_token_failure') {
-    //     _isLoading = true;
-    //     notifyListeners();
-    //     Application.isShowAuthPopup = true;
-    //     // Utility.authErrorPopup(context);
-    //   } else if (_data[ApiKeys.message] == 'User_blocked_by_admin') {
-    //     Application.isShowPopup = _data[ApiKeys.show_popup];
-    //     Application.adminPhoneNumber = _data[ApiKeys.phoneNumber].toString();
-    //     _isLoading = true;
-    //     notifyListeners();
-    //     Application.isShowBlockedPopup =
-    //         savedPhoneNumber.isNotEmpty ? true : true;
-    //     Application.isShowLogoutPopup = false;
-    //     Utility.logoutUser(context);
-    //     setAppData(_data, context);
-    //     // Utility.authErrorPopup(context);
-    //   } else {
-    //     _isLoading = true;
-    //     notifyListeners();
-    //     Application.isShowDatabasePopup = true;
-    //     // Utility.databaseErrorPopup(context);
-    //   }
-    // } else {
-    //   _isLoading = true;
-    //   notifyListeners();
-    //   Utility.printLog('Some error occurred');
-    //   Utility.databaseErrorPopup(context);
-    // }
+    Map<String, dynamic> _getResult = await ApiFunctions.getApiResult(
+        url, Application.deviceToken,
+        version: info.version);
+    bool _status = _getResult['status'];
+    var _data = _getResult['data'];
+    // print(_data);
+    if (_status) {
+      if (_data[ApiKeys.message] == 'User_Authenticated_successfully' ||
+          _data["message"] == 'User_created_successfully') {
+        Application.isShowPopup = _data[ApiKeys.show_popup];
+        Application.adminPhoneNumber = _data[ApiKeys.phoneNumber].toString();
+        Application.shareText = _data['share_text'];
+        if (savedAddress.isNotEmpty) {
+          Application.address = savedAddress;
+        } else {
+          prefs.setString(
+              "address",
+              _data[ApiKeys.user][0][ApiKeys.address].toString() != 'null'
+                  ? _data[ApiKeys.user][0][ApiKeys.address].toString()
+                  : '');
+          Application.address =
+              _data[ApiKeys.user][0][ApiKeys.address].toString() != 'null'
+                  ? _data[ApiKeys.user][0][ApiKeys.address].toString()
+                  : '';
+        }
+        if (savedName.isNotEmpty) {
+          Application.userName = savedName;
+        } else {
+          prefs.setString(
+              "name",
+              _data[ApiKeys.user][0][ApiKeys.name].toString() != 'null'
+                  ? _data[ApiKeys.user][0][ApiKeys.name].toString()
+                  : '');
+          Application.userName =
+              _data[ApiKeys.user][0][ApiKeys.name].toString() != 'null'
+                  ? _data[ApiKeys.user][0][ApiKeys.name].toString()
+                  : '';
+        }
+        if (savedPhoneNumber.isNotEmpty) {
+          if (_data[ApiKeys.user][0][ApiKeys.phone_number].toString() !=
+              savedPhoneNumber) {
+            _isLoading = true;
+            notifyListeners();
+            Utility.logoutUser(context);
+            Application.isShowLogoutPopup = true;
+            // setAppData(_data, context);
+            fetchData();
+          } else {
+            // setAppData(_data, context);
+            fetchData();
+          }
+        } else {
+          // setAppData(_data, context);
+          fetchData();
+        }
+      } else if (_data[ApiKeys.message] == 'Auth_token_failure') {
+        _isLoading = true;
+        notifyListeners();
+        Application.isShowAuthPopup = true;
+        // Utility.authErrorPopup(context);
+      } else if (_data[ApiKeys.message] == 'User_blocked_by_admin') {
+        Application.isShowPopup = _data[ApiKeys.show_popup];
+        Application.adminPhoneNumber = _data[ApiKeys.phoneNumber].toString();
+        _isLoading = true;
+        notifyListeners();
+        Application.isShowBlockedPopup =
+            savedPhoneNumber.isNotEmpty ? true : true;
+        Application.isShowLogoutPopup = false;
+        Utility.logoutUser(context);
+        setAppData(_data, context);
+        // Utility.authErrorPopup(context);
+      } else {
+        _isLoading = true;
+        notifyListeners();
+        Application.isShowDatabasePopup = true;
+        // Utility.databaseErrorPopup(context);
+      }
+    } else {
+      _isLoading = true;
+      notifyListeners();
+      Utility.printLog('Some error occurred');
+      // Utility.databaseErrorPopup(context);
+    }
   }
 
   Future<void> fetchData() async {
@@ -459,11 +462,12 @@ class MainContainerViewModel with ChangeNotifier {
       final String apiUrl =
           // '${Constants.baseUrl}api.php?user_id=${Application.userId}'; // Pass user_id to the API
           '${Constants.baseUrl}api.php?user_id=${Application.userId}&token=$deviceToken';
-
+      print(apiUrl);
       final response = await http.get(Uri.parse(apiUrl));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+
         // print("User ID from SharedPreferences: $savedUserId");
         if (data['status'] == true) {
           if (data['data']['cart'] != null) {
@@ -513,19 +517,19 @@ class MainContainerViewModel with ChangeNotifier {
                 );
               }
             }
-            // Printing the cart data
-            print('Cart Data:');
-            for (var cartItem in _cart) {
-              print(
-                  'Cart ID: ${cartItem.cart_id}, Name: ${cartItem.name}, Quantity: ${cartItem.quantity}, Price: ${cartItem.price}');
-            }
+            // // Printing the cart data
+            // print('Cart Data:');
+            // for (var cartItem in _cart) {
+            //   print(
+            //       'Cart ID: ${cartItem.cart_id}, Name: ${cartItem.name}, Quantity: ${cartItem.quantity}, Price: ${cartItem.price}');
+            // }
 
-            // Printing the wishlist data
-            print('Wishlist Data:');
-            for (var wishlistItem in _whislist) {
-              print(
-                  'Wishlist ID: ${wishlistItem.cart_id}, Name: ${wishlistItem.name}, Quantity: ${wishlistItem.quantity}, Price: ${wishlistItem.price}');
-            }
+            // // Printing the wishlist data
+            // print('Wishlist Data:');
+            // for (var wishlistItem in _whislist) {
+            //   print(
+            //       'Wishlist ID: ${wishlistItem.cart_id}, Name: ${wishlistItem.name}, Quantity: ${wishlistItem.quantity}, Price: ${wishlistItem.price}');
+            // }
           }
 
           // Process Sliders Data
@@ -738,7 +742,12 @@ class MainContainerViewModel with ChangeNotifier {
               );
             }
           }
-
+          // Fetch notification count if available
+          if (data['data'].containsKey('notificationCount')) {
+            _notificationCount = data['data']['notificationCount'];
+          } else {
+            _notificationCount = 0; // Default value if not available
+          }
           // Handle notification count
           // int notificationCount = data['data']['notification_count'] ?? 0;
 

@@ -66,7 +66,7 @@ class _FeaturedCoursesState extends State<FeaturedCourses> {
       }
     } else {
       Utility.printLog('Something went wrong.');
-      Utility.databaseErrorPopup(context);
+      // Utility.databaseErrorPopup(context);
     }
   }
 

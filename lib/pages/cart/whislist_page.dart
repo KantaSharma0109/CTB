@@ -257,17 +257,11 @@ class _WhislistPageState extends State<WhislistPage> {
     setState(() {
       user_id = userId;
     });
-    // Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
-    //   requestType: RequestType.GET,
-    //   url:
-    //       // 'users/getUserWhislist/$user_id/$offset?language_id=${Application.languageId}',
-    //       '${Constants.baseUrl}getWishlist.php?action=getUserWishlist&user_id=$user_id&offset=$offset',
-    // );
-
     Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
       requestType: RequestType.GET,
       url:
           '$url/users/getUserWhislist/$user_id/$offset?language_id=${Application.languageId}',
+      // '${Constants.baseUrl}getWishlist.php?action=getUserWishlist&user_id=$user_id&offset=$offset',
     );
 
     bool _status = _getNews['status'];
@@ -329,7 +323,6 @@ class _WhislistPageState extends State<WhislistPage> {
       }
       setState(() {
         isLoading = true;
-        context.read<MainContainerViewModel>().setWhislist(whislist);
       });
       Utility.showProgress(false);
     } else {

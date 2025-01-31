@@ -41,45 +41,6 @@ class CoursePageViewModel with ChangeNotifier {
   }
 
   //Get Search Course Data Function
-  // Future<void> getSearchedCourses(String value, BuildContext context) async {
-  //   _isSearching = true;
-  //   _isLoading = false;
-  //   _isReachedEnd = false;
-  //   _offset = 0;
-  //   _courseList.clear();
-  //   notifyListeners();
-  //   String url =
-  //       '${Constants.finalUrl}/courses_api/getSearchedCourse/$value?language_id=${Application.languageId}&user_id=${Application.userId}';
-  //   Map<String, dynamic> _getResult =
-  //       await ApiFunctions.getApiResult(url, Application.deviceToken);
-
-  //   bool _status = _getResult['status'];
-  //   var _data = _getResult['data'];
-  //   if (_status) {
-  //     if (_data['message'] == 'Auth_token_failure') {
-  //       Utility.authErrorPopup(
-  //           context,
-  //           'Sorry for inconvenience. Their is some authentication problem regarding your account contact support: ' +
-  //               Application.adminPhoneNumber);
-  //     } else {
-  //       var jsonResult = _data['courses'];
-  //       jsonResult.forEach((course) => {
-  //             _courseList.add(
-  //               Course.fromJson(course),
-  //             ),
-  //           });
-  //     }
-  //     _isLoading = true;
-  //     notifyListeners();
-  //     Utility.showProgress(false);
-  //   } else {
-  //     _isLoading = true;
-  //     notifyListeners();
-  //     Utility.printLog('Some error occurred');
-  //     Utility.databaseErrorPopup(context);
-  //   }
-  // }
-
   Future<void> getSearchedCourses(String value, BuildContext context) async {
     _isSearching = true;
     _isLoading = false;
@@ -87,54 +48,93 @@ class CoursePageViewModel with ChangeNotifier {
     _offset = 0;
     _courseList.clear();
     notifyListeners();
-
-    // API URL for searched courses
     String url =
-        '${Constants.baseUrl}course.php?action=getSearchedCourses&value=$value&user_id=${Application.userId}';
+        '${Constants.finalUrl}/courses_api/getSearchedCourse/$value?language_id=${Application.languageId}&user_id=${Application.userId}';
+    Map<String, dynamic> _getResult =
+        await ApiFunctions.getApiResult(url, Application.deviceToken);
 
-    try {
-      // Fetch API result
-      Map<String, dynamic> _getResult =
-          await ApiFunctions.getApiResult(url, deviceToken);
-      print("API Response: $_getResult");
-
-      bool _status = _getResult['status'];
-      var _data = _getResult['data'];
-
-      if (_status) {
-        if (_data['message'] == 'Auth_token_failure') {
-          Utility.authErrorPopup(
-              context,
-              'Sorry for inconvenience. There is some authentication problem regarding your account, contact support: ' +
-                  Application.adminPhoneNumber);
-        } else {
-          var jsonResult = _data['courses'];
-          jsonResult.forEach((course) {
-            // Update image path by appending base URL
-            String imageUrl =
-                'https://dashboard.cheftarunabirla.com${course['image_path']}';
-            course['image_path'] =
-                imageUrl; // Add full image URL to course data
-
-            _courseList.add(Course.fromJson(course)); // Add course to the list
-          });
-        }
-        _isLoading = true;
-        notifyListeners();
-        Utility.showProgress(false);
+    bool _status = _getResult['status'];
+    var _data = _getResult['data'];
+    if (_status) {
+      if (_data['message'] == 'Auth_token_failure') {
+        Utility.authErrorPopup(
+            context,
+            'Sorry for inconvenience. Their is some authentication problem regarding your account contact support: ' +
+                Application.adminPhoneNumber);
       } else {
-        _isLoading = true;
-        notifyListeners();
-        Utility.printLog('Some error occurred');
-        // Utility.databaseErrorPopup(context);
+        var jsonResult = _data['courses'];
+        jsonResult.forEach((course) => {
+              _courseList.add(
+                Course.fromJson(course),
+              ),
+            });
       }
-    } catch (e) {
       _isLoading = true;
       notifyListeners();
-      Utility.printLog('Error: $e');
-      // Utility.databaseErrorPopup(context);
+      Utility.showProgress(false);
+    } else {
+      _isLoading = true;
+      notifyListeners();
+      Utility.printLog('Some error occurred');
+      Utility.databaseErrorPopup(context);
     }
   }
+
+  // Future<void> getSearchedCourses(String value, BuildContext context) async {
+  //   _isSearching = true;
+  //   _isLoading = false;
+  //   _isReachedEnd = false;
+  //   _offset = 0;
+  //   _courseList.clear();
+  //   notifyListeners();
+
+  //   // API URL for searched courses
+  //   String url =
+  //       '${Constants.baseUrl}course.php?action=getSearchedCourses&value=$value&user_id=${Application.userId}';
+
+  //   try {
+  //     // Fetch API result
+  //     Map<String, dynamic> _getResult =
+  //         await ApiFunctions.getApiResult(url, deviceToken);
+  //     print("API Response: $_getResult");
+
+  //     bool _status = _getResult['status'];
+  //     var _data = _getResult['data'];
+
+  //     if (_status) {
+  //       if (_data['message'] == 'Auth_token_failure') {
+  //         Utility.authErrorPopup(
+  //             context,
+  //             'Sorry for inconvenience. There is some authentication problem regarding your account, contact support: ' +
+  //                 Application.adminPhoneNumber);
+  //       } else {
+  //         var jsonResult = _data['courses'];
+  //         jsonResult.forEach((course) {
+  //           // Update image path by appending base URL
+  //           String imageUrl =
+  //               'https://dashboard.cheftarunabirla.com${course['image_path']}';
+  //           course['image_path'] =
+  //               imageUrl; // Add full image URL to course data
+
+  //           _courseList.add(Course.fromJson(course)); // Add course to the list
+  //         });
+  //       }
+  //       _isLoading = true;
+  //       notifyListeners();
+  //       Utility.showProgress(false);
+  //     } else {
+  //       _isLoading = true;
+  //       notifyListeners();
+  //       Utility.printLog('Some error occurred');
+  //       // Utility.databaseErrorPopup(context);
+  //     }
+  //   } catch (e) {
+  //     _isLoading = true;
+  //     notifyListeners();
+  //     Utility.printLog('Error: $e');
+  //     // Utility.databaseErrorPopup(context);
+  //   }
+  // }
 
   //Get Course Data Function
   Future<void> getCourseData(BuildContext context,
@@ -155,12 +155,13 @@ class CoursePageViewModel with ChangeNotifier {
     String getUrl =
         '${Constants.finalUrl}/courses_api/getCoursesByCategory?language_id=${Application.languageId}&category=$_selectedCategory&offset=$_offset&user_id=${Application.userId}';
     // '${Constants.baseUrl}course.php?action=getCoursesByCategory&category=$_selectedCategory&offset=$_offset&user_id=$_userId';
-    print(getUrl);
+
     Map<String, dynamic> _getResult =
         await ApiFunctions.getApiResult(getUrl, Application.deviceToken);
 
     bool _status = _getResult['status'];
     var _data = _getResult['data'];
+    print(_data);
     if (_status) {
       if (!isMoreData) {
         _courseList.clear();

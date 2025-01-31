@@ -217,17 +217,17 @@ class OtpInScreenState extends State<OtpInScreen> {
                         }),
                       ),
                       SizedBox(height: 20),
-                      TextButton(
-                        onPressed: _resendOtpIn,
-                        child: Text(
-                          "Resend Otp",
-                          style: TextStyle(
-                            color: Color(0xFFD68D54),
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      // TextButton(
+                      //   onPressed: _resendOtpIn,
+                      //   child: Text(
+                      //     "Resend Otp",
+                      //     style: TextStyle(
+                      //       color: Color(0xFFD68D54),
+                      //       fontSize: 16.0,
+                      //       fontWeight: FontWeight.bold,
+                      //     ),
+                      //   ),
+                      // ),
                       SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,

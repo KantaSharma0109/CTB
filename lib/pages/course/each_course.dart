@@ -315,105 +315,105 @@ class _EachCourseState extends State<EachCourse>
   }
 
   // ADD OR REMOVE ITEM FROM CART
-  // Future<void> updateCart(id, value, imagePath) async {
-  //   Utility.showProgress(true);
-  //   Map<String, String> params = {
-  //     'user_id': Application.userId,
-  //     'id': id,
-  //     'image_path': imagePath,
-  //   };
-  //   String url = value == 'add'
-  //       ? '${Constants.finalUrl}/courses_api/addToCart'
-  //       : '${Constants.finalUrl}/courses_api/removeFromCart';
-  //   Map<String, dynamic> _postResult =
-  //       await ApiFunctions.postApiResult(url, Application.deviceToken, params);
-
-  //   bool _status = _postResult['status'];
-  //   var _data = _postResult['data'];
-  //   if (_status) {
-  //     Utility.showProgress(false);
-  //     if (_data['message'] == 'success') {
-  //       if (value == 'add') {
-  //         Utility.showSnacbar(context, 'Item successfully added to cart!!');
-  //         Future.delayed(const Duration(milliseconds: 500), () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //               builder: (context) => const CartPage(),
-  //             ),
-  //           );
-  //         });
-  //       } else {
-  //         Utility.showSnacbar(context, 'Item successfully removed from cart!!');
-  //       }
-  //     } else if (_data['message'] == 'Auth_token_failure') {
-  //       Utility.authErrorPopup(
-  //           context,
-  //           'Sorry for inconvenience. Their is some authentication problem regarding your account contact support: ' +
-  //               Application.adminPhoneNumber);
-  //     } else {
-  //       Utility.showSnacbar(context, 'Some error occurred!!');
-  //     }
-  //   } else {
-  //     Utility.printLog('Something went wrong.');
-  //   }
-  // }
-
-  Future<void> updateCart(String id, String value, String imagePath) async {
-    String apiUrl = '${Constants.baseUrl}cartWishlist.php?action=';
-
-    // Determine the endpoint
-    String action = value == 'add' ? 'addToCart' : 'removeFromCart';
-    String url = '$apiUrl$action';
-    print(url);
-    // Set up headers and body
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'token': 'your-auth-token', // Replace with your actual token
-    };
-
-    Map<String, dynamic> body = {
-      'id': id,
+  Future<void> updateCart(id, value, imagePath) async {
+    Utility.showProgress(true);
+    Map<String, String> params = {
       'user_id': Application.userId,
+      'id': id,
       'image_path': imagePath,
     };
+    String url = value == 'add'
+        ? '${Constants.finalUrl}/courses_api/addToCart'
+        : '${Constants.finalUrl}/courses_api/removeFromCart';
+    Map<String, dynamic> _postResult =
+        await ApiFunctions.postApiResult(url, Application.deviceToken, params);
 
-    try {
-      // Send the POST request
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
-        body: jsonEncode(body),
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
-        if (responseData['message'] == 'success') {
-          if (value == 'add') {
-            Utility.showSnacbar(context, 'Item successfully added to cart!');
+    bool _status = _postResult['status'];
+    var _data = _postResult['data'];
+    if (_status) {
+      Utility.showProgress(false);
+      if (_data['message'] == 'success') {
+        if (value == 'add') {
+          Utility.showSnacbar(context, 'Item successfully added to cart!!');
+          Future.delayed(const Duration(milliseconds: 500), () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const CartPage()),
+              MaterialPageRoute(
+                builder: (context) => const CartPage(),
+              ),
             );
-          } else {
-            Utility.showSnacbar(
-                context, 'Item successfully removed from cart!');
-          }
-        } else if (responseData['message'] == 'Auth_token_failure') {
-          Utility.authErrorPopup(
-            context,
-            'Authentication failed. Contact support.',
-          );
+          });
         } else {
-          Utility.showSnacbar(context, 'Some error occurred!');
+          Utility.showSnacbar(context, 'Item successfully removed from cart!!');
         }
+      } else if (_data['message'] == 'Auth_token_failure') {
+        Utility.authErrorPopup(
+            context,
+            'Sorry for inconvenience. Their is some authentication problem regarding your account contact support: ' +
+                Application.adminPhoneNumber);
       } else {
-        Utility.showSnacbar(context, 'Failed to connect to the server!');
+        Utility.showSnacbar(context, 'Some error occurred!!');
       }
-    } catch (e) {
-      Utility.showSnacbar(context, 'An error occurred: $e');
+    } else {
+      Utility.printLog('Something went wrong.');
     }
   }
+
+  // Future<void> updateCart(String id, String value, String imagePath) async {
+  //   String apiUrl = '${Constants.baseUrl}cartWishlist.php?action=';
+
+  //   // Determine the endpoint
+  //   String action = value == 'add' ? 'addToCart' : 'removeFromCart';
+  //   String url = '$apiUrl$action';
+  //   print(url);
+  //   // Set up headers and body
+  //   Map<String, String> headers = {
+  //     'Content-Type': 'application/json',
+  //     'token': 'your-auth-token', // Replace with your actual token
+  //   };
+
+  //   Map<String, dynamic> body = {
+  //     'id': id,
+  //     'user_id': Application.userId,
+  //     'image_path': imagePath,
+  //   };
+
+  //   try {
+  //     // Send the POST request
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: headers,
+  //       body: jsonEncode(body),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       final Map<String, dynamic> responseData = jsonDecode(response.body);
+  //       if (responseData['message'] == 'success') {
+  //         if (value == 'add') {
+  //           Utility.showSnacbar(context, 'Item successfully added to cart!');
+  //           Navigator.push(
+  //             context,
+  //             MaterialPageRoute(builder: (context) => const CartPage()),
+  //           );
+  //         } else {
+  //           Utility.showSnacbar(
+  //               context, 'Item successfully removed from cart!');
+  //         }
+  //       } else if (responseData['message'] == 'Auth_token_failure') {
+  //         Utility.authErrorPopup(
+  //           context,
+  //           'Authentication failed. Contact support.',
+  //         );
+  //       } else {
+  //         Utility.showSnacbar(context, 'Some error occurred!');
+  //       }
+  //     } else {
+  //       Utility.showSnacbar(context, 'Failed to connect to the server!');
+  //     }
+  //   } catch (e) {
+  //     Utility.showSnacbar(context, 'An error occurred: $e');
+  //   }
+  // }
 
   Future<void> getReviewsByCategory() async {
     Utility.showProgress(true);

@@ -108,180 +108,180 @@ class _EachBlogState extends State<EachBlog> {
     }
   }
 
-  // Future<void> getBlogImages() async {
-  //   Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
-  //     requestType: RequestType.GET,
-  //     url:
-  //         '$url/getBlogImages/${widget.id}?language_id=${Application.languageId}',
-  //   );
-
-  //   bool _status = _getNews['status'];
-  //   var _data = _getNews['data'];
-  //   print(_data);
-  //   if (_status) {
-  //     // data loaded
-  //     if (_data['data'].length > 0) {
-  //       imagePath =
-  //           Constants.imgBackendUrl + _data['data'][0]['path'].toString();
-  //     } else {
-  //       imagePath = Constants.imgBackendUrl + '/images/all/logo.png';
-  //     }
-  //     for (var i = 0; i < _data['data'].length; i++) {
-  //       list.add(
-  //         GestureDetector(
-  //           onTap: () {
-  //             Navigator.push(
-  //               context,
-  //               MaterialPageRoute(
-  //                 builder: (context) => OpenImage(
-  //                   url: Constants.imgBackendUrl +
-  //                       _data['data'][0]['path'].toString(),
-  //                 ),
-  //               ),
-  //             );
-  //           },
-  //           child: Container(
-  //             margin:
-  //                 const EdgeInsets.symmetric(vertical: 0.0, horizontal: 8.0),
-  //             child: ClipRRect(
-  //               borderRadius: BorderRadius.circular(10.0),
-  //               child: SizedBox(
-  //                 width: double.infinity,
-  //                 height: 300.0,
-  //                 child: CachedNetworkImage(
-  //                   imageUrl: Constants.imgBackendUrl +
-  //                       _data['data'][i]['path'].toString(),
-  //                   placeholder: (context, url) => const ImagePlaceholder(),
-  //                   errorWidget: (context, url, error) =>
-  //                       const ImagePlaceholder(),
-  //                   // fadeOutDuration: const Duration(seconds: 1),
-  //                   // fadeInDuration: const Duration(seconds: 1),
-  //                   fit: BoxFit.cover,
-  //                   // width: 144.0,
-  //                   height: 200.0,
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //     setState(() => isLoading = true);
-  //     Utility.showProgress(false);
-  //   } else {
-  //     Utility.printLog('Something went wrong.');
-  //     Utility.showProgress(false);
-  //   }
-  // }
-
   Future<void> getBlogImages() async {
-    // Construct the API URL to fetch blog images based on the ID
-    final String apiUrl =
-        '${Constants.baseUrl}blog.php?action=getBlogImages&id=${widget.id}'; // Use the blog ID from the widget
-    print('API URL: $apiUrl');
-    try {
-      final response = await http.get(Uri.parse(apiUrl));
+    Map<String, dynamic> _getNews = await MySqlDBService().runQuery(
+      requestType: RequestType.GET,
+      url:
+          '$url/getBlogImages/${widget.id}?language_id=${Application.languageId}',
+    );
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        print('Decoded Response Data: $responseData');
-        bool status = responseData['status'];
-        var data = responseData['data'];
-
-        if (status) {
-          // Process the image data
-          list.clear(); // Clear the previous list of images
-
-          if (data != null && data['data'] != null && data['data'].length > 0) {
-            // Loop through the images and add them to the list
-            for (var imageData in data['data']) {
-              String imagePath = Constants.imgBackendUrl + imageData['path'];
-
-              list.add(
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OpenImage(
-                          url: imagePath, // Image path
-                        ),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: CachedNetworkImage(
-                        imageUrl: imagePath,
-                        placeholder: (context, url) => const ImagePlaceholder(),
-                        errorWidget: (context, url, error) =>
-                            const ImagePlaceholder(),
-                        fit: BoxFit.cover,
-                        height: 200.0,
-                      ),
-                    ),
+    bool _status = _getNews['status'];
+    var _data = _getNews['data'];
+    print(_data);
+    if (_status) {
+      // data loaded
+      if (_data['data'].length > 0) {
+        imagePath =
+            Constants.imgBackendUrl + _data['data'][0]['path'].toString();
+      } else {
+        imagePath = Constants.imgBackendUrl + '/images/all/logo.png';
+      }
+      for (var i = 0; i < _data['data'].length; i++) {
+        list.add(
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OpenImage(
+                    url: Constants.imgBackendUrl +
+                        _data['data'][0]['path'].toString(),
                   ),
                 ),
               );
-            }
-          } else {
-            // Default image if no images are available
-            list.add(
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OpenImage(
-                        url: Constants.imgBackendUrl + '/images/all/logo.png',
-                      ),
-                    ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: CachedNetworkImage(
-                      imageUrl:
-                          Constants.imgBackendUrl + '/images/all/logo.png',
-                      placeholder: (context, url) => const ImagePlaceholder(),
-                      errorWidget: (context, url, error) =>
-                          const ImagePlaceholder(),
-                      // fit: BoxFit.contain,
-                      // height: 200.0,
-                      fit: BoxFit
-                          .fill, // Use BoxFit.fill or BoxFit.cover based on your preference
-                      height: double
-                          .infinity, // Set height to infinity to fill the parent container
-                      width: double.infinity,
-                    ),
+            },
+            child: Container(
+              margin:
+                  const EdgeInsets.symmetric(vertical: 0.0, horizontal: 8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 300.0,
+                  child: CachedNetworkImage(
+                    imageUrl: Constants.imgBackendUrl +
+                        _data['data'][i]['path'].toString(),
+                    placeholder: (context, url) => const ImagePlaceholder(),
+                    errorWidget: (context, url, error) =>
+                        const ImagePlaceholder(),
+                    // fadeOutDuration: const Duration(seconds: 1),
+                    // fadeInDuration: const Duration(seconds: 1),
+                    fit: BoxFit.cover,
+                    // width: 144.0,
+                    height: 200.0,
                   ),
                 ),
               ),
-            );
-          }
-
-          // Update the state to reload the carousel slider with the images
-          setState(() {
-            isLoading = true;
-          });
-          Utility.showProgress(false);
-        } else {
-          Utility.printLog('Error fetching images.');
-          Utility.showProgress(false);
-        }
-      } else {
-        throw Exception('Failed to load images');
+            ),
+          ),
+        );
       }
-    } catch (error) {
-      Utility.printLog('Error: $error');
+      setState(() => isLoading = true);
       Utility.showProgress(false);
-      // Utility.databaseErrorPopup(context);
+    } else {
+      Utility.printLog('Something went wrong.');
+      Utility.showProgress(false);
     }
   }
+
+  // Future<void> getBlogImages() async {
+  //   // Construct the API URL to fetch blog images based on the ID
+  //   final String apiUrl =
+  //       '${Constants.baseUrl}blog.php?action=getBlogImages&id=${widget.id}'; // Use the blog ID from the widget
+  //   print('API URL: $apiUrl');
+  //   try {
+  //     final response = await http.get(Uri.parse(apiUrl));
+
+  //     if (response.statusCode == 200) {
+  //       final Map<String, dynamic> responseData = json.decode(response.body);
+  //       print('Decoded Response Data: $responseData');
+  //       bool status = responseData['status'];
+  //       var data = responseData['data'];
+
+  //       if (status) {
+  //         // Process the image data
+  //         list.clear(); // Clear the previous list of images
+
+  //         if (data != null && data['data'] != null && data['data'].length > 0) {
+  //           // Loop through the images and add them to the list
+  //           for (var imageData in data['data']) {
+  //             String imagePath = Constants.imgBackendUrl + imageData['path'];
+
+  //             list.add(
+  //               GestureDetector(
+  //                 onTap: () {
+  //                   Navigator.push(
+  //                     context,
+  //                     MaterialPageRoute(
+  //                       builder: (context) => OpenImage(
+  //                         url: imagePath, // Image path
+  //                       ),
+  //                     ),
+  //                   );
+  //                 },
+  //                 child: Container(
+  //                   margin: const EdgeInsets.symmetric(horizontal: 8.0),
+  //                   child: ClipRRect(
+  //                     borderRadius: BorderRadius.circular(10.0),
+  //                     child: CachedNetworkImage(
+  //                       imageUrl: imagePath,
+  //                       placeholder: (context, url) => const ImagePlaceholder(),
+  //                       errorWidget: (context, url, error) =>
+  //                           const ImagePlaceholder(),
+  //                       fit: BoxFit.cover,
+  //                       height: 200.0,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             );
+  //           }
+  //         } else {
+  //           // Default image if no images are available
+  //           list.add(
+  //             GestureDetector(
+  //               onTap: () {
+  //                 Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder: (context) => OpenImage(
+  //                       url: Constants.imgBackendUrl + '/images/all/logo.png',
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //               child: Container(
+  //                 margin: const EdgeInsets.symmetric(horizontal: 8.0),
+  //                 child: ClipRRect(
+  //                   borderRadius: BorderRadius.circular(10.0),
+  //                   child: CachedNetworkImage(
+  //                     imageUrl:
+  //                         Constants.imgBackendUrl + '/images/all/logo.png',
+  //                     placeholder: (context, url) => const ImagePlaceholder(),
+  //                     errorWidget: (context, url, error) =>
+  //                         const ImagePlaceholder(),
+  //                     // fit: BoxFit.contain,
+  //                     // height: 200.0,
+  //                     fit: BoxFit
+  //                         .fill, // Use BoxFit.fill or BoxFit.cover based on your preference
+  //                     height: double
+  //                         .infinity, // Set height to infinity to fill the parent container
+  //                     width: double.infinity,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           );
+  //         }
+
+  //         // Update the state to reload the carousel slider with the images
+  //         setState(() {
+  //           isLoading = true;
+  //         });
+  //         Utility.showProgress(false);
+  //       } else {
+  //         Utility.printLog('Error fetching images.');
+  //         Utility.showProgress(false);
+  //       }
+  //     } else {
+  //       throw Exception('Failed to load images');
+  //     }
+  //   } catch (error) {
+  //     Utility.printLog('Error: $error');
+  //     Utility.showProgress(false);
+  //     // Utility.databaseErrorPopup(context);
+  //   }
+  // }
 
   _filterRetriever() async {
     try {

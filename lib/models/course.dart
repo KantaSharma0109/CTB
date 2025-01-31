@@ -42,6 +42,9 @@ class Course {
       image_path: jsonData[ApiKeys.image_path].toString() != 'null'
           ? jsonData[ApiKeys.image_path].toString()
           : "",
+      // image_path: jsonData[ApiKeys.image_path].toString() != 'null'
+      //     ? "https://dashboard.cheftarunabirla.com${jsonData[ApiKeys.image_path]}"
+      //     : "",
       share_url: jsonData[ApiKeys.share_url].toString(),
       subscribed: jsonData[ApiKeys.subscribedDays].toString() != 'null'
           ? jsonData[ApiKeys.subscribedDays] > 0
